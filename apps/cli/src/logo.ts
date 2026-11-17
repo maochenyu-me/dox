@@ -1,33 +1,19 @@
 /**
- * The repo logo (docs/dox.png), reduced to a terminal-safe ink ramp. Two sizes
- * exist because the dashboard card is short and the about screen has room; both
- * are sampled from the same source, cropped to the artwork.
+ * ASCII-only wordmarks. Keeping the artwork to basic ASCII characters avoids
+ * width differences between Windows Terminal fonts and Unicode-aware renderers.
  */
 export const LOGO_MARK = [
-  "            .*. ",
-  "          .=#+  ",
-  "         .%@*   ",
-  "        =#@-    ",
-  "       =#@:     ",
-  "      +%%:-:-   ",
-  "    :*%@%@+::+= ",
-  "   .#@*@@@@@-.+-",
-  "  :*@-#@@@**@%-*",
-  " :@@= :@@@%@@%+ ",
+  "  ____  _____  __  __ ",
+  " |  _ \\|  __ \\|  \\/  |",
+  " | | | | |  | | \\  / ",
+  " | |_| | |__| | /  \\  ",
+  " |____/|_____/ /_/\\_\\ ",
 ] as const;
 
 export const LOGO_FULL = [
-  "                -#  ",
-  "              -+@:  ",
-  "            .*=@+   ",
-  "            %@@+    ",
-  "          -##@:     ",
-  "         -%@@.      ",
-  "        -#@@        ",
-  "       =#@#:+==+-   ",
-  "     .**@@@@*-.:-*- ",
-  "     *#@+@@@%@%:.:%.",
-  "    *#@-%@@@@@##+:-*",
-  "  .##@: @@@@*=%@@@*+",
-  " .%@@=..-@@@@@@@%*. ",
+  "       ____  ____  __  __ ",
+  "      / __ \\/ __ \\|  \\/  |",
+  "     / / / / / / / / \\  / ",
+  "    / /_/ / /_/ / / /  \\  ",
+  "   /_____/\\____/ /_/  \\_\\ ",
 ] as const;
