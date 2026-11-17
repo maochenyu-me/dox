@@ -109,6 +109,16 @@ jobs:
           path: dist/dox-windows-amd64.zip
           if-no-files-found: error
 
+      # Standalone exes for users who just want the two binaries without the
+      # zip wrapper; published as individual release assets.
+      - uses: actions/upload-artifact@v7
+        with:
+          name: dox-windows-exe
+          path: |
+            dist/windows-amd64/dox.exe
+            dist/windows-amd64/dox-server.exe
+          if-no-files-found: error
+
   prepare-release:
     name: Prepare GitHub Release
     runs-on: ubuntu-latest
@@ -140,6 +150,8 @@ jobs:
           files: |
             ./artifacts/*.tar.gz
             ./artifacts/dox-windows-amd64.zip
+            ./artifacts/dox.exe
+            ./artifacts/dox-server.exe
           draft: true
           prerelease: false
           generate_release_notes: true
