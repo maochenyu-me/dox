@@ -1,5 +1,5 @@
 import { spawn, type ChildProcess } from "node:child_process";
-import { createWriteStream, existsSync } from "node:fs";
+import { closeSync, existsSync, openSync } from "node:fs";
 import { createServer } from "node:net";
 import { access, mkdir } from "node:fs/promises";
 import { dirname, join } from "node:path";
@@ -15,7 +15,7 @@ const HEALTH_TIMEOUT_MS = 15_000;
 const HEALTH_POLL_MS = 100;
 
 let child: ChildProcess | null = null;
-let logStream: ReturnType<typeof createWriteStream> | null = null;
+let logFd: number | null = null;
 let cleaned = false;
 
 export interface RuntimeOptions {
@@ -102,13 +102,11 @@ async function stopLocalServer(): Promise<void> {
   const running = child;
   child = null;
   if (!running) {
-    logStream?.end();
-    logStream = null;
+    closeLogFile();
     return;
   }
   if (running.exitCode !== null) {
-    logStream?.end();
-    logStream = null;
+    closeLogFile();
     return;
   }
   running.kill();
@@ -122,8 +120,13 @@ async function stopLocalServer(): Promise<void> {
       resolve();
     });
   });
-  logStream?.end();
-  logStream = null;
+  closeLogFile();
+}
+
+function closeLogFile(): void {
+  if (logFd === null) return;
+  closeSync(logFd);
+  logFd = null;
 }
 
 export async function startRuntime(args: string[]): Promise<RuntimeOptions> {
@@ -156,10 +159,7 @@ export async function startRuntime(args: string[]): Promise<RuntimeOptions> {
   await mkdir(dataDir, { recursive: true });
   await mkdir(logDir, { recursive: true });
   const dbPath = join(dataDir, "dox.db");
-  const serverLog = createWriteStream(join(logDir, "dox-server.log"), {
-    flags: "a",
-  });
-  logStream = serverLog;
+  logFd = openSync(join(logDir, "dox-server.log"), "a");
   const running = spawn(binary, [], {
     cwd: dirname(binary),
     env: {
@@ -167,7 +167,7 @@ export async function startRuntime(args: string[]): Promise<RuntimeOptions> {
       DOX_LISTEN_ADDR: `127.0.0.1:${port}`,
       DOX_DB_PATH: dbPath,
     },
-    stdio: ["ignore", "ignore", logStream],
+    stdio: ["ignore", "ignore", logFd],
     windowsHide: true,
   });
   running.once("error", (error) => {
