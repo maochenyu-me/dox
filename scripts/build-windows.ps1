@@ -28,8 +28,11 @@ Pop-Location
 if ($goExit -ne 0) { throw "go build failed" }
 
 Write-Host ">>> building dox.exe"
-bun build --compile --target=bun-windows-x64 ./apps/cli/src/index.ts --outfile $cliOut
+$env:DOX_CLI_VERSION = $version
+$env:DOX_CLI_COMMIT = $commit
+bun run scripts/build-windows-cli.ts
 if ($LASTEXITCODE -ne 0) { throw "bun build failed" }
+if (-not (Test-Path $cliOut)) { throw "bun build did not create $cliOut" }
 
 @"
 dox for Windows

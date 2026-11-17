@@ -10,6 +10,7 @@ on:
       - "packages/proto-gen/**"
       - "proto/**"
       - "scripts/build-windows.ps1"
+      - "scripts/build-windows-cli.ts"
       - "bun.lock"
       - ".github/workflows/windows-build.yml"
   workflow_dispatch:
