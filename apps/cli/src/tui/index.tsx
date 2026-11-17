@@ -74,6 +74,12 @@ export async function runTui(): Promise<void> {
 
   const app = render(
     <Root initialConfig={initialConfig} initialReason={initialReason} />,
+    {
+      // Windows Terminal can leave stale fullscreen frames in the primary
+      // scrollback buffer. An alternate screen keeps the TUI redraw isolated.
+      alternateScreen: process.platform === "win32",
+      incrementalRendering: false,
+    },
   );
   await app.waitUntilExit();
 }
