@@ -25,7 +25,7 @@ export const inviteServer = (opts: InviteOpts) =>
   withContext(opts, async ({ invites, output }) => {
     const inv = await invites.create({ ttlMs: opts.ttlMs });
     output.ok(
-      `Server invite: ${inv.code}\nExpires at:    ${new Date(Number(inv.expiresAt)).toISOString()}\nRedeem with:   dox accept ${inv.code}`,
+      `服务器邀请码：${inv.code}\n过期时间：    ${new Date(Number(inv.expiresAt)).toISOString()}\n使用命令：    dox accept ${inv.code}`,
       { invite: inv },
     );
   });
@@ -56,12 +56,12 @@ export const resetUserPassword = (userName: string, opts: GlobalOpts) =>
     const all = await users.list();
     const target = all.find((u) => u.name === userName);
     if (!target) {
-      output.error(`user not found: ${userName}`);
+      output.error(`未找到用户：${userName}`);
       process.exit(1);
     }
     const { tempPassword } = await users.resetUserPassword(target.id);
     output.ok(
-      `Reset password for ${userName}.\nTemp password: ${tempPassword}\nRelay this out-of-band; the user should run \`dox passwd\` after first login.`,
+      `已重置用户 ${userName} 的密码。\n临时密码：${tempPassword}\n请通过其他方式转交，用户首次登录后应运行 \`dox passwd\` 修改密码。`,
       { userName, tempPassword },
     );
   });

@@ -176,7 +176,7 @@ export const edit = (id: string, opts: TodoEditOpts) =>
 export const rm = (id: string, opts: GlobalOpts) =>
   withContext(opts, async ({ api, output }) => {
     await api.deleteTodo(id);
-    output.ok(`Deleted ${id}`, { deleted: id });
+    output.ok(`已删除待办 ${id}`, { deleted: id });
   });
 
 /**

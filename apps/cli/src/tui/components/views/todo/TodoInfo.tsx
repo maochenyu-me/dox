@@ -5,7 +5,8 @@ import { dueLabel, isOverdue } from "@dox/core";
 
 import { renderMarkdown } from "../../primitives/Markdown";
 import { color, icon } from "../../../theme";
-import { relativeTime, swatchColor, windowLabel } from "../../../util";
+import { swatchColor, windowLabel } from "../../../util";
+import { relativeTimeZh } from "../../../locale";
 
 interface TodoInfoProps {
   todo: Todo | null;
@@ -32,14 +33,14 @@ export function TodoInfo({
     return (
       <Box flexGrow={1} alignItems="center" justifyContent="center">
         <Text color={color.muted} dimColor>
-          no todo selected
+          未选择待办
         </Text>
       </Box>
     );
   }
   const statusIcon = todo.done ? icon.done : icon.open;
   const statusColor = todo.done ? color.success : color.accent;
-  const statusLabel = todo.done ? "Done" : "Open";
+  const statusLabel = todo.done ? "已完成" : "未完成";
 
   const dueAt = todo.dueAt === undefined ? undefined : Number(todo.dueAt);
   const allDay = todo.dueAllDay ?? false;
@@ -90,7 +91,7 @@ export function TodoInfo({
 
       {}
       <Box flexDirection="column" marginTop={1}>
-        <InfoRow label="Project">
+        <InfoRow label="项目">
           {project ? (
             <Text>
               <Text color={swatchColor(project.color)}>● </Text>
@@ -98,42 +99,42 @@ export function TodoInfo({
             </Text>
           ) : (
             <Text color={color.muted} dimColor>
-              ● inbox
+              ● 私密
             </Text>
           )}
         </InfoRow>
-        <InfoRow label="By">
+        <InfoRow label="创建者">
           <Text color={color.accent2}>
             {ownerName ?? todo.createdBy.slice(0, 8).toLowerCase() + "…"}
           </Text>
         </InfoRow>
-        <InfoRow label="Created">
-          <Text>{relativeTime(nowMs, todo.createdAt)} ago</Text>
+        <InfoRow label="创建时间">
+          <Text>{relativeTimeZh(nowMs, todo.createdAt)}</Text>
         </InfoRow>
-        <InfoRow label="Updated">
-          <Text>{relativeTime(nowMs, todo.updatedAt)} ago</Text>
+        <InfoRow label="更新时间">
+          <Text>{relativeTimeZh(nowMs, todo.updatedAt)}</Text>
         </InfoRow>
         {dueAt !== undefined && (
-          <InfoRow label="Due">
+          <InfoRow label="截止时间">
             <Text
               color={
                 isOverdue(dueAt, allDay, nowMs) ? color.danger : color.warn
               }
             >
               {dueLabel(dueAt, allDay, nowMs, todo.dueZone)}
-              {allDay ? " (all-day)" : ""}
+              {allDay ? "（全天）" : ""}
             </Text>
           </InfoRow>
         )}
         {remindAt !== undefined && (
-          <InfoRow label="Remind">
+          <InfoRow label="提醒时间">
             <Text color={color.accent2}>
               {dueLabel(remindAt, false, nowMs)}
             </Text>
           </InfoRow>
         )}
         {startsAt !== undefined && endsAt !== undefined && (
-          <InfoRow label="Window">
+          <InfoRow label="会议时间">
             <Text color={color.accent2}>{windowLabel(startsAt, endsAt)}</Text>
           </InfoRow>
         )}
@@ -143,7 +144,7 @@ export function TodoInfo({
       {preview && (
         <Box flexDirection="column" marginTop={1}>
           <Text color={color.muted} dimColor>
-            {"─ Description ".padEnd(Math.max(0, contentW), "─")}
+            {"─ 描述 ".padEnd(Math.max(0, contentW), "─")}
           </Text>
           <Text color={color.muted}>{preview.text}</Text>
         </Box>
@@ -152,11 +153,11 @@ export function TodoInfo({
       {}
       <Box marginTop={1}>
         <Text color={color.muted} dimColor>
-          press{" "}
+          按{" "}
           <Text color={color.accent} bold>
             ⏎
           </Text>{" "}
-          {overflowed ? "to read the full description" : "for details"}
+          {overflowed ? "阅读完整描述" : "查看详情"}
         </Text>
       </Box>
     </Box>

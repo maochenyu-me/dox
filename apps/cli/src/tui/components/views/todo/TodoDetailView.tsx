@@ -4,7 +4,8 @@ import type { Project, Todo } from "@dox/core";
 import { formatWhenInput, isOverdue } from "@dox/core";
 
 import { color, icon } from "../../../theme";
-import { relativeTime, swatchColor, windowLabel } from "../../../util";
+import { swatchColor, windowLabel } from "../../../util";
+import { relativeTimeZh } from "../../../locale";
 import { VERSION } from "../../../../version";
 import { Footer } from "../../layout/Footer";
 import { Markdown, MarkdownEmpty } from "../../primitives/Markdown";
@@ -45,14 +46,14 @@ export function TodoDetailView({
 
   const statusIcon = todo.done ? icon.done : icon.open;
   const statusColor = todo.done ? color.success : color.accent;
-  const statusLabel = todo.done ? "Done" : "Open";
+  const statusLabel = todo.done ? "已完成" : "未完成";
 
   return (
     <Box flexDirection="column" paddingX={1}>
       <Box height={topPad} />
       <Box justifyContent="center">
         <TitledPanel
-          title="Todo"
+          title="待办详情"
           width={panelWidth}
           height={panelHeight}
           paddingX={2}
@@ -85,7 +86,7 @@ export function TodoDetailView({
               flexDirection="column"
               width={Math.floor((panelWidth - 8) / 2)}
             >
-              <MetaRow label="Project">
+              <MetaRow label="项目">
                 {project ? (
                   <Text>
                     <Text color={swatchColor(project.color)}>● </Text>
@@ -93,25 +94,25 @@ export function TodoDetailView({
                   </Text>
                 ) : (
                   <Text color={color.muted} dimColor>
-                    ● inbox
+                    ● 私密
                   </Text>
                 )}
               </MetaRow>
-              <MetaRow label="Created by">
+              <MetaRow label="创建者">
                 <Text color={color.accent2}>
                   {ownerName ?? todo.createdBy.toLowerCase()}
                 </Text>
               </MetaRow>
             </Box>
             <Box flexDirection="column" flexGrow={1}>
-              <MetaRow label="Created">
-                <Text>{relativeTime(nowMs, todo.createdAt)} ago</Text>
+              <MetaRow label="创建时间">
+                <Text>{relativeTimeZh(nowMs, todo.createdAt)}</Text>
               </MetaRow>
-              <MetaRow label="Updated">
-                <Text>{relativeTime(nowMs, todo.updatedAt)} ago</Text>
+              <MetaRow label="更新时间">
+                <Text>{relativeTimeZh(nowMs, todo.updatedAt)}</Text>
               </MetaRow>
               {todo.dueAt !== undefined && (
-                <MetaRow label="Due">
+                <MetaRow label="截止时间">
                   <Text
                     color={
                       isOverdue(
@@ -128,19 +129,19 @@ export function TodoDetailView({
                       todo.dueAllDay ?? false,
                       todo.dueZone,
                     )}
-                    {todo.dueAllDay ? " (all-day)" : ""}
+                    {todo.dueAllDay ? "（全天）" : ""}
                   </Text>
                 </MetaRow>
               )}
               {todo.remindAt !== undefined && (
-                <MetaRow label="Remind">
+                <MetaRow label="提醒时间">
                   <Text color={color.accent2}>
                     {formatWhenInput(Number(todo.remindAt), false)}
                   </Text>
                 </MetaRow>
               )}
               {todo.startsAt !== undefined && todo.endsAt !== undefined && (
-                <MetaRow label="Window">
+                <MetaRow label="会议时间">
                   <Text color={color.accent2}>
                     {windowLabel(Number(todo.startsAt), Number(todo.endsAt))}
                   </Text>
@@ -157,14 +158,14 @@ export function TodoDetailView({
           </Box>
           <Box marginTop={1}>
             <Text bold color={color.muted}>
-              DESCRIPTION
+              描述
             </Text>
           </Box>
           <Box marginTop={1} flexDirection="column">
             {todo.description ? (
               <Markdown source={todo.description} width={panelWidth - 6} />
             ) : (
-              <MarkdownEmpty hint="No description yet. Press e to add one." />
+              <MarkdownEmpty hint="暂无描述。按 e 添加。" />
             )}
           </Box>
         </TitledPanel>

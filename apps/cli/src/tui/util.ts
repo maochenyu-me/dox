@@ -29,15 +29,15 @@ export function relativeTime(now: number, raw: unknown): string {
   if (!Number.isFinite(ms) || ms <= 0) return "—";
   const diffMs = Math.max(0, now - ms);
   const s = Math.floor(diffMs / 1000);
-  if (s < 60) return `${s}s`;
+  if (s < 60) return `${s}秒`;
   const m = Math.floor(s / 60);
-  if (m < 60) return `${m}m`;
+  if (m < 60) return `${m}分`;
   const h = Math.floor(m / 60);
-  if (h < 24) return `${h}h`;
+  if (h < 24) return `${h}小时`;
   const d = Math.floor(h / 24);
-  if (d < 7) return `${d}d`;
+  if (d < 7) return `${d}天`;
   const w = Math.floor(d / 7);
-  return `${w}w`;
+  return `${w}周`;
 }
 
 export function swatchColor(raw: string | undefined): string {

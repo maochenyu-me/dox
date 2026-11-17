@@ -86,15 +86,15 @@ export function SearchView({
 
   const matchLabel =
     query.trim() === ""
-      ? `${todos.length} todos total`
-      : `${results.length} match${results.length === 1 ? "" : "es"}`;
+      ? `共 ${todos.length} 条待办`
+      : `找到 ${results.length} 条结果`;
 
   return (
     <Box flexDirection="column" paddingX={1}>
       <Box height={topPad} />
       <Box justifyContent="center">
         <TitledPanel
-          title="Search"
+          title="搜索"
           width={panelWidth}
           height={panelHeight}
           paddingX={2}
@@ -111,7 +111,7 @@ export function SearchView({
             <Box flexGrow={1}>
               <TextInput
                 defaultValue={query}
-                placeholder="search by title or description…"
+                placeholder="按标题或描述搜索…"
                 onChange={handleQueryChange}
                 onSubmit={handleSubmit}
               />
@@ -124,7 +124,7 @@ export function SearchView({
             {hydrating && (
               <Text color={color.muted} dimColor>
                 {"   "}
-                {icon.dot} loading descriptions…
+                {icon.dot} 正在加载描述…
               </Text>
             )}
           </Box>
@@ -135,8 +135,8 @@ export function SearchView({
               <Text color={color.muted} dimColor>
                 {"  "}
                 {query.trim() === ""
-                  ? "type to search…"
-                  : "no matches — try a shorter query"}
+                  ? "输入内容开始搜索…"
+                  : "没有匹配结果，请尝试更短的关键词"}
               </Text>
             ) : (
               <>
@@ -178,9 +178,9 @@ export function SearchView({
         version={VERSION}
         outerPadX={1}
         hints={[
-          ["↑↓", "navigate"],
-          ["⏎", "open"],
-          ["esc", "back"],
+          ["↑↓", "导航"],
+          ["⏎", "打开"],
+          ["esc", "返回"],
         ]}
       />
     </Box>

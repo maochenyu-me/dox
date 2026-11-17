@@ -40,14 +40,14 @@ export function AboutView({ version, onClose }: AboutViewProps) {
       </Box>
       <Box marginTop={2} justifyContent="center">
         <Box flexDirection="column">
-          <AboutRow label="author" value={AUTHOR} valueColor={color.accent2} />
-          <AboutRow label="source" value={REPO} valueColor={color.accent2} />
-          <AboutRow label="license" value={LICENSE} valueColor={color.accent} />
+          <AboutRow label="作者" value={AUTHOR} valueColor={color.accent2} />
+          <AboutRow label="源码" value={REPO} valueColor={color.accent2} />
+          <AboutRow label="许可证" value={LICENSE} valueColor={color.accent} />
         </Box>
       </Box>
       <Box marginTop={2} justifyContent="center">
         <Text color={color.muted} dimColor>
-          {icon.brand} thanks for using dox
+          {icon.brand} 感谢使用 dox
         </Text>
       </Box>
       <Footer
@@ -55,8 +55,8 @@ export function AboutView({ version, onClose }: AboutViewProps) {
         version={version}
         outerPadX={1}
         hints={[
-          ["esc", "back"],
-          ["⏎", "back"],
+          ["esc", "返回"],
+          ["⏎", "返回"],
         ]}
       />
     </Box>

@@ -20,9 +20,9 @@ export const list = (opts: NotificationListOpts) =>
 export const ack = (ids: string[], opts: NotificationListOpts) =>
   withContext(opts, async ({ notifications, output }) => {
     const acked = await notifications.ack(ids.length > 0 ? ids : undefined);
-    const scope = ids.length > 0 ? `${ids.length} selected` : "all unread";
+    const scope = ids.length > 0 ? `选中的 ${ids.length} 条` : "全部未读";
     output.ok(
-      `Acknowledged ${acked} reminder${acked === 1 ? "" : "s"} (${scope})`,
+      `已确认 ${acked} 条提醒（${scope}）`,
       {
         acked,
       },

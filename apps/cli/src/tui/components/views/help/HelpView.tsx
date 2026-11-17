@@ -9,33 +9,33 @@ interface HelpViewProps {
 }
 
 const navigate: ReadonlyArray<readonly [string, string]> = [
-  ["j / ↓", "move down"],
-  ["k / ↑", "move up"],
-  ["h / l", "switch sidebar ↔ list"],
-  ["tab", "next filter"],
-  ["g / G", "first / last"],
+  ["j / ↓", "向下移动"],
+  ["k / ↑", "向上移动"],
+  ["h / l", "切换侧栏/列表"],
+  ["tab", "下一个筛选"],
+  ["g / G", "第一个 / 最后一个"],
 ];
 
 const act: ReadonlyArray<readonly [string, string]> = [
-  ["space", "toggle done"],
-  ["i / a", "add todo"],
-  ["e", "edit todo"],
-  ["d", "delete todo"],
-  ["p", "new project"],
-  ["m", "manage project"],
-  ["D", "delete project"],
-  ["/", "search todos"],
-  ["n", "reminders"],
-  ["r", "refresh"],
-  ["start/end", "meeting window (editor)"],
+  ["space", "切换完成状态"],
+  ["i / a", "添加待办"],
+  ["e", "编辑待办"],
+  ["d", "删除待办"],
+  ["p", "新建项目"],
+  ["m", "管理项目"],
+  ["D", "删除项目"],
+  ["/", "搜索待办"],
+  ["n", "提醒"],
+  ["r", "刷新"],
+  ["start/end", "会议时间（编辑器）"],
 ];
 const app: ReadonlyArray<readonly [string, string]> = [
-  ["s", "open settings"],
-  ["A", "about dox"],
-  ["?", "toggle this help"],
-  ["q / Ctrl+C", "quit"],
-  ["esc", "close / cancel"],
-  ["dox todo move", "reorder from the shell"],
+  ["s", "打开设置"],
+  ["A", "关于 dox"],
+  ["?", "显示/隐藏帮助"],
+  ["q / Ctrl+C", "退出"],
+  ["esc", "关闭/取消"],
+  ["dox todo move", "从终端调整顺序"],
 ];
 
 export function HelpView({ onClose }: HelpViewProps) {
@@ -62,17 +62,17 @@ export function HelpView({ onClose }: HelpViewProps) {
           width={cardWidth}
         >
           <Text bold color={color.accent}>
-            {icon.brand} Keyboard shortcuts
+            {icon.brand} 快捷键
           </Text>
           <Box marginTop={1}>
             {}
             <Box flexDirection="column" flexGrow={1} flexBasis={0}>
-              <Section title="Navigate" rows={navigate} />
-              <Section title="App" rows={app} marginTop />
+              <Section title="导航" rows={navigate} />
+              <Section title="应用" rows={app} marginTop />
             </Box>
             <Box width={2} />
             <Box flexDirection="column" flexGrow={1} flexBasis={0}>
-              <Section title="Act" rows={act} />
+              <Section title="操作" rows={act} />
             </Box>
           </Box>
         </Box>

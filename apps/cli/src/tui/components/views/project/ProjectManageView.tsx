@@ -70,13 +70,13 @@ export function ProjectManageView({
           justifyContent="center"
         >
           <TitledPanel
-            title="Project"
+            title="项目"
             width={cardWidth}
             paddingX={2}
             paddingY={1}
             focused
           >
-            <Text color={color.muted}>project not found</Text>
+            <Text color={color.muted}>未找到项目</Text>
           </TitledPanel>
         </Box>
         <Footer
@@ -128,15 +128,15 @@ export function ProjectManageView({
           />
 
           <Box marginTop={1} flexDirection="column">
-            <Text color={color.muted}>Members</Text>
+            <Text color={color.muted}>成员</Text>
             <Box marginTop={1} flexDirection="column">
               {!membersLoaded ? (
                 <Text color={color.muted} dimColor>
-                  loading…
+                  加载中…
                 </Text>
               ) : members.length === 0 ? (
                 <Text color={color.muted} dimColor>
-                  (just you)
+                  （只有你）
                 </Text>
               ) : (
                 members.map((m) => (
@@ -153,7 +153,7 @@ export function ProjectManageView({
                 <Text color={color.accent} bold>
                   i
                 </Text>{" "}
-                to invite a new user.
+                邀请新用户。
               </Text>
             </Box>
           )}
@@ -166,7 +166,7 @@ export function ProjectManageView({
         hints={
           isOwner
             ? [
-                ["i", "invite"],
+                ["i", "邀请"],
                 ["esc", "back"],
               ]
             : [["esc", "back"]]
@@ -251,14 +251,14 @@ function InvitePickerModal({
         justifyContent="center"
       >
         <TitledPanel
-          title="Invite User"
+          title="邀请用户"
           width={cardWidth}
           paddingX={2}
           paddingY={1}
           focused
         >
           <Text wrap="wrap">
-            Pick a role for the invitee. You'll get a code to share.
+            请选择受邀者角色，稍后会生成可分享的邀请码。
           </Text>
           <Box marginTop={1} justifyContent="center">
             <Text color={color.accent} bold>{`[e]`}</Text>
@@ -275,11 +275,11 @@ function InvitePickerModal({
           )}
           {busy && (
             <Box marginTop={1}>
-              <Text color={color.muted}>creating invite…</Text>
+              <Text color={color.muted}>正在创建邀请…</Text>
             </Box>
           )}
           <Box marginTop={1}>
-            <Text color={color.muted}>esc to cancel</Text>
+            <Text color={color.muted}>按 esc 取消</Text>
           </Box>
         </TitledPanel>
       </Box>
@@ -325,7 +325,7 @@ function CodeRevealModal({
         justifyContent="center"
       >
         <TitledPanel
-          title="Invite Code"
+          title="邀请码"
           width={cardWidth}
           paddingX={2}
           paddingY={1}
@@ -333,10 +333,10 @@ function CodeRevealModal({
           borderTint={color.accent}
         >
           <Text wrap="wrap">
-            New {role} invite for <Text bold>{projectName}</Text>. Share this
+            新的 {role} 邀请，项目： <Text bold>{projectName}</Text>. Share this
             code with the user you want to add.{" "}
             <Text color={color.danger} bold>
-              You won't see it again.
+              此邀请码只会显示一次。
             </Text>
           </Text>
           <Box marginTop={1} justifyContent="center">
@@ -345,10 +345,10 @@ function CodeRevealModal({
             </Text>
           </Box>
           <Box marginTop={1}>
-            <Text color={color.muted}>expires {expiresIn}</Text>
+            <Text color={color.muted}>有效期：{expiresIn}</Text>
           </Box>
           <Box marginTop={1}>
-            <Text color={color.muted}>press any key to close</Text>
+            <Text color={color.muted}>按任意键关闭</Text>
           </Box>
         </TitledPanel>
       </Box>

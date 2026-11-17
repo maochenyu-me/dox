@@ -38,7 +38,7 @@ export function NotificationsView({
     <Box flexDirection="column" paddingX={1}>
       <Box justifyContent="center">
         <TitledPanel
-          title="Reminders"
+          title="提醒"
           width={panelWidth}
           height={panelHeight}
           paddingX={2}
@@ -49,19 +49,19 @@ export function NotificationsView({
           <Box>
             <Text color={color.muted} dimColor>
               {reminders.length === 0
-                ? "No reminders yet"
-                : `${reminders.length} recent`}
+                ? "暂无提醒"
+                : `最近 ${reminders.length} 条`}
             </Text>
             <Box flexGrow={1} />
             <Text color={color.muted} dimColor>
-              marked read on open
+              打开后自动标记为已读
             </Text>
           </Box>
 
           <Box marginTop={1} flexDirection="column">
             {visible.length === 0 ? (
               <Text color={color.muted} dimColor>
-                {"  "}reminders appear here at their due or remind time
+                {"  "}待办到期或到达提醒时间后会显示在这里
               </Text>
             ) : (
               visible.map((r) => {
@@ -78,7 +78,7 @@ export function NotificationsView({
                     <Text> </Text>
                     <Box width={8} justifyContent="flex-end">
                       <Text color={color.warn}>
-                        {when === "now" ? "now" : `${when} ago`}
+                        {when === "now" ? "刚刚" : `${when}前`}
                       </Text>
                     </Box>
                     <Text> </Text>
@@ -105,7 +105,7 @@ export function NotificationsView({
           {reminders.length > visible.length && (
             <Box marginTop={1}>
               <Text color={color.muted} dimColor>
-                {`${reminders.length - visible.length} older reminders not shown`}
+                {`${reminders.length - visible.length} 条较早提醒未显示`}
               </Text>
             </Box>
           )}
@@ -117,8 +117,8 @@ export function NotificationsView({
         version={VERSION}
         outerPadX={1}
         hints={[
-          ["esc", "back"],
-          ["n", "close"],
+          ["esc", "返回"],
+          ["n", "关闭"],
         ]}
       />
     </Box>

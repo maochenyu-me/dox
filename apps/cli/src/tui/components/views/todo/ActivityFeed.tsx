@@ -3,7 +3,8 @@ import { Box, Text } from "ink";
 import type { ActivityEvent, ActivityVerb } from "@dox/core";
 
 import { color, icon } from "../../../theme";
-import { relativeTime, swatchColor } from "../../../util";
+import { swatchColor } from "../../../util";
+import { relativeTimeZh } from "../../../locale";
 
 interface ActivityFeedProps {
   events: ReadonlyArray<ActivityEvent>;
@@ -20,11 +21,11 @@ export function ActivityFeed({ events, nowMs }: ActivityFeedProps) {
         justifyContent="center"
       >
         <Text color={color.muted} dimColor>
-          No activity yet
+          暂无动态
         </Text>
         <Box marginTop={1}>
           <Text color={color.muted} dimColor>
-            Invite a teammate to a project to see updates here.
+            邀请成员加入项目后，动态会显示在这里。
           </Text>
         </Box>
       </Box>
@@ -51,7 +52,7 @@ function ActivityRow({
   nowMs: number;
 }) {
   const { glyph, tint } = verbStyle(event.verb);
-  const age = relativeTime(nowMs, event.createdAt);
+  const age = relativeTimeZh(nowMs, event.createdAt);
   return (
     <Box>
       <Box width={ACTOR_W}>

@@ -103,11 +103,11 @@ export function TodoEditorView({
     }
   });
 
-  const headerTitle = mode === "add" ? "New todo" : "Edit todo";
+  const headerTitle = mode === "add" ? "新建待办" : "编辑待办";
   const subtitle =
     mode === "add"
-      ? "Capture a new task. Ctrl+S to save · Esc cancels."
-      : "Update the title, deadlines, meeting window, and markdown description.";
+      ? "记录一项新任务。Ctrl+S 保存 · Esc 取消。"
+      : "修改标题、截止时间、会议时间和 Markdown 描述。";
 
   const cardWidth = Math.min(80, cols - 8);
 
@@ -128,12 +128,12 @@ export function TodoEditorView({
         >
           <Text color={color.muted}>{subtitle}</Text>
 
-          <Field id={TITLE_FIELD} label="title" autoFocus value={title}>
+          <Field id={TITLE_FIELD} label="标题" autoFocus value={title}>
             {(focused) => (
               <TextInput
                 isDisabled={!focused}
                 defaultValue={defaultTitle}
-                placeholder={mode === "add" ? "new todo title…" : undefined}
+                placeholder={mode === "add" ? "待办标题…" : undefined}
                 onChange={setTitle}
                 onSubmit={(value) => {
                   setTitle(value);
@@ -143,12 +143,12 @@ export function TodoEditorView({
             )}
           </Field>
 
-          <Field id={DUE_FIELD} label="due" value={due}>
+          <Field id={DUE_FIELD} label="截止" value={due}>
             {(focused) => (
               <TextInput
                 isDisabled={!focused}
                 defaultValue={defaultDue}
-                placeholder={`optional · ${WHEN_HINT}`}
+                placeholder={`可选 · ${WHEN_HINT}`}
                 onChange={setDue}
                 onSubmit={(value) => {
                   setDue(value);
@@ -159,16 +159,16 @@ export function TodoEditorView({
           </Field>
           {dueInvalid && (
             <Box marginLeft={4}>
-              <Text color={color.danger}>unrecognised date · {WHEN_HINT}</Text>
+              <Text color={color.danger}>无法识别的日期 · {WHEN_HINT}</Text>
             </Box>
           )}
 
-          <Field id={REMIND_FIELD} label="remind" value={remind}>
+          <Field id={REMIND_FIELD} label="提醒" value={remind}>
             {(focused) => (
               <TextInput
                 isDisabled={!focused}
                 defaultValue={defaultRemind}
-                placeholder="optional · defaults to the due time"
+                placeholder="可选 · 默认在截止时间提醒"
                 onChange={setRemind}
                 onSubmit={(value) => {
                   setRemind(value);
@@ -179,23 +179,23 @@ export function TodoEditorView({
           </Field>
           {remindInvalid && (
             <Box marginLeft={4}>
-              <Text color={color.danger}>unrecognised time · {WHEN_HINT}</Text>
+              <Text color={color.danger}>无法识别的时间 · {WHEN_HINT}</Text>
             </Box>
           )}
           {!remindInvalid && due.trim() !== "" && remind.trim() === "" && (
             <Box marginLeft={4}>
               <Text color={color.muted} dimColor>
-                you will be reminded at the due time
+                将会在截止时间提醒你
               </Text>
             </Box>
           )}
 
-          <Field id={MEET_START_FIELD} label="starts" value={meetStart}>
+          <Field id={MEET_START_FIELD} label="开始" value={meetStart}>
             {(focused) => (
               <TextInput
                 isDisabled={!focused}
                 defaultValue={defaultMeetStart}
-                placeholder={`optional · meeting start · ${WHEN_HINT}`}
+                placeholder={`可选 · 会议开始时间 · ${WHEN_HINT}`}
                 onChange={setMeetStart}
                 onSubmit={(value) => {
                   setMeetStart(value);
@@ -205,12 +205,12 @@ export function TodoEditorView({
             )}
           </Field>
 
-          <Field id={MEET_END_FIELD} label="ends" value={meetEnd}>
+          <Field id={MEET_END_FIELD} label="结束" value={meetEnd}>
             {(focused) => (
               <TextInput
                 isDisabled={!focused}
                 defaultValue={defaultMeetEnd}
-                placeholder={`optional · meeting end · ${WHEN_HINT}`}
+                placeholder={`可选 · 会议结束时间 · ${WHEN_HINT}`}
                 onChange={setMeetEnd}
                 onSubmit={(value) => {
                   setMeetEnd(value);
@@ -225,13 +225,13 @@ export function TodoEditorView({
             </Box>
           )}
 
-          <Field id={DESC_FIELD} label="description" value={description}>
+          <Field id={DESC_FIELD} label="描述" value={description}>
             {(focused) => (
               <MultilineInput
                 isDisabled={!focused}
                 value={description}
                 onChange={setDescription}
-                placeholder="optional · markdown (**bold**, `code`, [link](url), #, -, ```)"
+                placeholder="可选 · Markdown（**粗体**、`代码`、[链接](url)、#、-、```）"
                 width={cardWidth - 6}
                 maxRows={8}
               />
@@ -240,7 +240,7 @@ export function TodoEditorView({
 
           <Box marginTop={1}>
             <Text color={color.muted}>
-              Enter jumps to the next field · Ctrl+S to save · Esc cancels
+              Enter 跳到下一项 · Ctrl+S 保存 · Esc 取消
             </Text>
           </Box>
         </TitledPanel>
@@ -250,9 +250,9 @@ export function TodoEditorView({
         version={VERSION}
         outerPadX={1}
         hints={[
-          ["⏎", "next field"],
-          ["^S", "save"],
-          ["esc", "cancel"],
+          ["⏎", "下一项"],
+          ["^S", "保存"],
+          ["esc", "取消"],
         ]}
       />
     </Box>
@@ -270,13 +270,13 @@ function meetingError(startRaw: string, endRaw: string): string | null {
   const end = endRaw.trim();
   if (start === "" && end === "") return null;
   if (start === "" || end === "") {
-    return "a meeting needs both a start and an end";
+    return "会议必须同时填写开始和结束时间";
   }
   const from = parseWhen(start);
-  if (!from) return `unrecognised meeting start · ${WHEN_HINT}`;
+  if (!from) return `无法识别的会议开始时间 · ${WHEN_HINT}`;
   const to = parseWhen(end);
-  if (!to) return `unrecognised meeting end · ${WHEN_HINT}`;
-  if (to.at <= from.at) return "the meeting must end after it starts";
+  if (!to) return `无法识别的会议结束时间 · ${WHEN_HINT}`;
+  if (to.at <= from.at) return "会议结束时间必须晚于开始时间";
   return null;
 }
 

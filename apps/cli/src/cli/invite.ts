@@ -19,5 +19,5 @@ export const list = (opts: GlobalOpts) =>
 export const revoke = (codeHash: string, opts: GlobalOpts) =>
   withContext(opts, async ({ invites, output }) => {
     await invites.revoke(codeHash);
-    output.ok(`revoked ${codeHash}`, { revoked: codeHash });
+    output.ok(`已撤销邀请码 ${codeHash}`, { revoked: codeHash });
   });

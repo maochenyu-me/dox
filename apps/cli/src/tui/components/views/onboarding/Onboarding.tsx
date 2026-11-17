@@ -37,7 +37,7 @@ export type OnboardingReason = "fresh" | "reauth";
 
 const DEFAULT_SERVER =
   process.env.DOX_ACTIVE_SERVER || "http://127.0.0.1:6278";
-const STEPS = ["Server", "Method", "Account", "Password"] as const;
+const STEPS = ["服务器", "方式", "账户", "密码"] as const;
 const MIN_PASSWORD_LEN = 8;
 
 interface OnboardingProps {
@@ -73,7 +73,7 @@ export function Onboarding({ reason = "fresh", onDone }: OnboardingProps) {
         }
       } catch (err) {
         if (cancelled) return;
-        setError(`Couldn't reach the server: ${(err as Error).message}`);
+        setError(`无法连接服务器： ${(err as Error).message}`);
         setStage("server");
       }
     })();
@@ -183,7 +183,7 @@ export function Onboarding({ reason = "fresh", onDone }: OnboardingProps) {
       return;
     }
     if (raw.length < MIN_PASSWORD_LEN) {
-      setError(`Password must be at least ${MIN_PASSWORD_LEN} characters.`);
+      setError(`密码至少需要 ${MIN_PASSWORD_LEN} 个字符。`);
       return;
     }
     setError(null);
@@ -193,7 +193,7 @@ export function Onboarding({ reason = "fresh", onDone }: OnboardingProps) {
 
   const submitConfirmPassword = (raw: string) => {
     if (raw !== password) {
-      setError("Passwords do not match.");
+      setError("两次输入的密码不一致。");
       return;
     }
     setError(null);
@@ -227,8 +227,8 @@ export function Onboarding({ reason = "fresh", onDone }: OnboardingProps) {
         <Text color={color.muted}>
           {"   "}
           {reason === "reauth"
-            ? "Your saved login was rejected. Let's reconnect."
-            : "Welcome. Let's get you connected."}
+            ? "保存的登录已失效，请重新连接。"
+            : "欢迎使用，请完成连接设置。"}
         </Text>
       </Box>
 
@@ -258,7 +258,7 @@ export function Onboarding({ reason = "fresh", onDone }: OnboardingProps) {
         <Panel focused paddingY={1} width={64}>
           {stage === "server" && (
             <Box flexDirection="column">
-              <Text color={color.muted}>Where does your dox server live?</Text>
+              <Text color={color.muted}>请输入 dox 服务器地址：</Text>
               <Box marginTop={1}>
                 <Text color={color.muted}>{">  "}</Text>
                 <TextInput
@@ -271,40 +271,40 @@ export function Onboarding({ reason = "fresh", onDone }: OnboardingProps) {
           )}
 
           {stage === "probing" && (
-            <Spinner label={`Connecting to ${server}…`} />
+            <Spinner label={`正在连接 ${server}…`} />
           )}
 
           {stage === "choose-branch" && (
             <Box flexDirection="column">
-              <Text color={color.muted}>How would you like to connect?</Text>
+              <Text color={color.muted}>请选择连接方式：</Text>
               <Box flexDirection="column" marginTop={1}>
                 <Box>
                   <Text color={color.accent} bold>
                     {"  1  "}
                   </Text>
-                  <Text>Log in to an existing account on this server</Text>
+                  <Text>登录此服务器上的已有账户</Text>
                 </Box>
                 <Box>
                   <Text color={color.accent} bold>
                     {"  2  "}
                   </Text>
-                  <Text>Create a new account </Text>
+                  <Text>创建新账户 </Text>
                   <Text color={color.muted}>
                     {info && info.registrationOpen
-                      ? "(open — no invite needed)"
-                      : "(invite code required)"}
+                      ? "（开放注册，无需邀请码）"
+                      : "（需要邀请码）"}
                   </Text>
                 </Box>
               </Box>
               <Box marginTop={1}>
-                <Text color={color.muted}>Press 1 or 2.</Text>
+                <Text color={color.muted}>请按 1 或 2。</Text>
               </Box>
             </Box>
           )}
 
           {stage === "enter-invite" && (
             <Box flexDirection="column">
-              <Text color={color.muted}>Paste your invite code.</Text>
+              <Text color={color.muted}>请粘贴邀请码。</Text>
               <Box marginTop={1}>
                 <Text color={color.muted}>{">  "}</Text>
                 <TextInput placeholder="ABCD-EFGH" onSubmit={submitInvite} />
@@ -315,7 +315,7 @@ export function Onboarding({ reason = "fresh", onDone }: OnboardingProps) {
           {stage === "enter-username" && (
             <Box flexDirection="column">
               <Text color={color.muted}>
-                {intent === "login" ? "Your username." : "Pick a username."}
+                {intent === "login" ? "请输入用户名。" : "请设置用户名。"}
               </Text>
               <Box marginTop={1}>
                 <Text color={color.muted}>{">  "}</Text>
@@ -328,8 +328,8 @@ export function Onboarding({ reason = "fresh", onDone }: OnboardingProps) {
             <Box flexDirection="column">
               <Text color={color.muted}>
                 {intent === "login"
-                  ? "Your password."
-                  : `Pick a password (at least ${MIN_PASSWORD_LEN} characters).`}
+                  ? "请输入密码。"
+                  : `请设置密码（至少 ${MIN_PASSWORD_LEN} 个字符）。`}
               </Text>
               <Box marginTop={1}>
                 <Text color={color.muted}>{">  "}</Text>
@@ -340,7 +340,7 @@ export function Onboarding({ reason = "fresh", onDone }: OnboardingProps) {
 
           {stage === "confirm-password" && (
             <Box flexDirection="column">
-              <Text color={color.muted}>Confirm your password.</Text>
+              <Text color={color.muted}>请确认密码。</Text>
               <Box marginTop={1}>
                 <Text color={color.muted}>{">  "}</Text>
                 <TextInput
@@ -354,8 +354,8 @@ export function Onboarding({ reason = "fresh", onDone }: OnboardingProps) {
           {stage === "enter-server-name" && (
             <Box flexDirection="column">
               <Text color={color.muted}>
-                Give this server a display name.{" "}
-                <Text dimColor>(Leave blank to skip.)</Text>
+                请为服务器设置显示名称。{" "}
+                <Text dimColor>（留空跳过）</Text>
               </Text>
               <Box marginTop={1}>
                 <Text color={color.muted}>{">  "}</Text>
@@ -370,8 +370,8 @@ export function Onboarding({ reason = "fresh", onDone }: OnboardingProps) {
           {stage === "enter-server-description" && (
             <Box flexDirection="column">
               <Text color={color.muted}>
-                Add a one-line description.{" "}
-                <Text dimColor>(Leave blank to skip.)</Text>
+                请添加一行服务器描述。{" "}
+                <Text dimColor>（留空跳过）</Text>
               </Text>
               <Box marginTop={1}>
                 <Text color={color.muted}>{">  "}</Text>
@@ -385,7 +385,7 @@ export function Onboarding({ reason = "fresh", onDone }: OnboardingProps) {
 
           {stage === "submitting" && (
             <Spinner
-              label={intent === "login" ? "logging in…" : "creating account…"}
+              label={intent === "login" ? "正在登录…" : "正在创建账户…"}
             />
           )}
         </Panel>
@@ -395,7 +395,7 @@ export function Onboarding({ reason = "fresh", onDone }: OnboardingProps) {
 
       <Box marginTop={1} paddingX={1}>
         <Text color={color.muted}>
-          <Text color={color.accent}>Ctrl+C</Text> cancel
+          <Text color={color.accent}>Ctrl+C</Text> 取消
         </Text>
       </Box>
     </Box>
@@ -406,23 +406,23 @@ function panelTitle(stage: Stage, intent: Intent): string {
   switch (stage) {
     case "server":
     case "probing":
-      return "Connect to server";
+      return "连接服务器";
     case "choose-branch":
-      return "Choose your path";
+      return "选择连接方式";
     case "enter-invite":
-      return "Invite code";
+      return "邀请码";
     case "enter-username":
-      return intent === "login" ? "Username" : "Pick a username";
+      return intent === "login" ? "用户名" : "设置用户名";
     case "enter-password":
-      return intent === "login" ? "Password" : "Pick a password";
+      return intent === "login" ? "密码" : "设置密码";
     case "confirm-password":
-      return "Confirm password";
+      return "确认密码";
     case "enter-server-name":
-      return "Server name (optional)";
+      return "服务器名称（可选）";
     case "enter-server-description":
-      return "Description (optional)";
+      return "描述（可选）";
     case "submitting":
-      return intent === "login" ? "Logging in" : "Creating account";
+      return intent === "login" ? "登录中" : "创建账户中";
   }
 }
 
@@ -459,7 +459,7 @@ function ContextStrip({
   userName,
 }: ContextStripProps) {
   const chips: { label: string; value: string; tone?: string }[] = [];
-  if (server) chips.push({ label: "server", value: server });
+  if (server) chips.push({ label: "服务器", value: server });
   if (info) {
     if (!info.hasUsers) {
       chips.push({
@@ -473,15 +473,15 @@ function ContextStrip({
         : info.ownerName
           ? `by ${info.ownerName}`
           : "(unnamed server)";
-      chips.push({ label: "joining", value: identity, tone: color.accent2 });
+      chips.push({ label: "加入", value: identity, tone: color.accent2 });
       chips.push({
         label: "registration",
         value: info.registrationOpen ? "open" : "invite-only",
       });
     }
   }
-  if (inviteCode) chips.push({ label: "invite", value: inviteCode });
-  if (userName) chips.push({ label: "user", value: userName });
+  if (inviteCode) chips.push({ label: "邀请码", value: inviteCode });
+  if (userName) chips.push({ label: "用户", value: userName });
   if (chips.length === 0) return null;
   return (
     <Box flexDirection="column">

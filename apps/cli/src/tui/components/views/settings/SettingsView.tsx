@@ -90,7 +90,7 @@ export function SettingsView({
       <Box height={topPad} />
       <Box justifyContent="center">
         <TitledPanel
-          title="Settings"
+          title="设置"
           width={panelWidth}
           paddingY={1}
           focused
@@ -118,7 +118,7 @@ export function SettingsView({
         mode="settings"
         version={VERSION}
         outerPadX={1}
-        hints={tab?.hints ?? [["esc", "close"]]}
+        hints={tab?.hints ?? [["esc", "关闭"]]}
       />
     </Box>
   );
@@ -171,7 +171,7 @@ function RowList({
     >
       {rows.length === 0 ? (
         <Text color={color.muted} dimColor>
-          (no items)
+          （暂无内容）
         </Text>
       ) : (
         rows.map((row, idx) => {
@@ -217,7 +217,7 @@ function Detail({
     return (
       <Box flexGrow={1} paddingX={2} paddingY={1}>
         <Text color={color.muted} dimColor>
-          select an item on the left
+          请在左侧选择一项
         </Text>
       </Box>
     );
@@ -230,7 +230,7 @@ function Detail({
       </Text>
       {row.value && (
         <Box marginTop={1}>
-          <Text color={color.muted}>Value: </Text>
+          <Text color={color.muted}>值：</Text>
           <Text color={color.accent2}>{row.value}</Text>
         </Box>
       )}
@@ -246,7 +246,7 @@ function Detail({
       <Box flexGrow={1} />
       <Box>
         <Text color={color.muted} dimColor>
-          {"─ tips ".padEnd(sepW, "─")}
+          {"─ 提示 ".padEnd(sepW, "─")}
         </Text>
       </Box>
       <Box marginTop={1}>
@@ -257,7 +257,7 @@ function Detail({
                 <Text color={color.accent} bold>
                   ⏎
                 </Text>{" "}
-                {row.enterLabel ?? "open"}
+                {row.enterLabel ?? "打开"}
               </Text>
             )}
             {row.onEnter && row.secondary && (
@@ -274,7 +274,7 @@ function Detail({
           </>
         ) : (
           <Text color={color.muted} dimColor>
-            view only
+            仅查看
           </Text>
         )}
       </Box>

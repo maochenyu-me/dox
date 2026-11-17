@@ -109,10 +109,10 @@ export function SettingsFormModal({
 
           <Box marginTop={1}>
             <Text color={color.muted}>
-              {fields.length > 1 ? "⏎ on each field to advance · " : "⏎ to "}
+              {fields.length > 1 ? "⏎ 逐项填写 · " : "⏎ "}
               {fields.length > 1 ? "" : submitLabel}
-              {fields.length > 1 ? "last ⏎ submits" : ""} · esc to cancel
-              {busy ? "  (saving…)" : ""}
+              {fields.length > 1 ? "最后按 ⏎ 提交" : ""} · esc 取消
+              {busy ? "  （保存中…）" : ""}
             </Text>
           </Box>
         </TitledPanel>
@@ -122,8 +122,8 @@ export function SettingsFormModal({
         version={VERSION}
         outerPadX={1}
         hints={[
-          ["⏎", fields.length > 1 ? "next / submit" : submitLabel],
-          ["esc", "cancel"],
+          ["⏎", fields.length > 1 ? "下一项 / 提交" : submitLabel],
+          ["esc", "取消"],
         ]}
       />
     </Box>

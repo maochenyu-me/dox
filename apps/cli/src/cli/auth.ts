@@ -191,9 +191,9 @@ export async function logoutCmd(opts: GlobalOpts = {}): Promise<void> {
   const profile = opts.server ? getProfileForServer(opts.server) : undefined;
   const removed = await clearConfig(profile);
   if (removed) {
-    console.log(`logged out — ${getConfigPath(profile ?? getActiveProfile())} removed.`);
+    console.log(`已退出登录，已移除 ${getConfigPath(profile ?? getActiveProfile())}。`);
   } else {
-    console.log("no config to remove — already logged out.");
+    console.log("没有可移除的配置，当前已是退出状态。");
   }
 }
 
@@ -215,5 +215,5 @@ export async function passwdCmd(opts: PasswdOptions): Promise<void> {
     console.error(`dox: ${(err as Error).message}`);
     process.exit(1);
   }
-  console.log("password changed.");
+  console.log("密码已修改。");
 }

@@ -46,6 +46,7 @@ import { useMinHold, useSpinnerFrame } from "./hooks";
 import { dueInput, relativeTime, swatchColor } from "./util";
 import { buildSettingsTabs } from "./settings";
 import { color, icon } from "./theme";
+import { relativeTimeZh, zh } from "./locale";
 import {
   dueTodayOrOverdue,
   initialState,
@@ -1036,7 +1037,7 @@ export function App({
       : 0;
     return (
       <ConfirmDialog
-        title="Delete project"
+        title="删除项目"
         tone={color.danger}
         footerMode="confirm delete"
         message={
@@ -1068,7 +1069,7 @@ export function App({
         <Box flexDirection="column" width={leftColW}>
           <Box>
             <TitledPanel
-              title="Server"
+              title={zh.server}
               width={serverW}
               paddingY={1}
               height={topRowH}
@@ -1081,7 +1082,7 @@ export function App({
               >
                 <Logo />
                 <Box marginTop={1}>
-                  <Text color={color.muted}>self-hosted todo</Text>
+                  <Text color={color.muted}>{zh.selfHostedTodo}</Text>
                 </Box>
               </Box>
             </TitledPanel>
@@ -1089,7 +1090,7 @@ export function App({
             <Box width={topGap} />
 
             <TitledPanel
-              title="Status"
+              title={zh.status}
               width={statusW}
               paddingY={1}
               height={topRowH}
@@ -1108,7 +1109,7 @@ export function App({
           <Box height={rowGap} />
 
           <TitledPanel
-            title="Todos"
+            title={zh.todos}
             width={leftColW}
             paddingY={1}
             height={todosH}
@@ -1119,7 +1120,7 @@ export function App({
               <Text color={color.accent2} bold>
                 {openCount}
               </Text>
-              <Text color={color.muted}>{" open  "}</Text>
+              <Text color={color.muted}>{" 未完成  "}</Text>
               <Text color={color.muted} dimColor>
                 {icon.dot}
               </Text>
@@ -1127,7 +1128,7 @@ export function App({
               <Text color={color.success} bold>
                 {doneTodayCount}
               </Text>
-              <Text color={color.muted}>{" done today"}</Text>
+              <Text color={color.muted}>{" 今日完成"}</Text>
               <Box flexGrow={1} />
               {state.unreadReminders > 0 && (
                 <Box marginRight={2}>
@@ -1136,7 +1137,7 @@ export function App({
                     {state.unreadReminders}
                   </Text>
                   <Text color={color.muted} dimColor>
-                    {" new"}
+                    {" 条新提醒"}
                   </Text>
                 </Box>
               )}
@@ -1151,7 +1152,7 @@ export function App({
                 tabs={[
                   {
                     key: "today",
-                    label: "Due",
+                    label: zh.due,
                     count: state.todos.filter(
                       (t) => !t.done && dueTodayOrOverdue(t, nowMs),
                     ).length,
@@ -1160,7 +1161,7 @@ export function App({
                   },
                   {
                     key: "inbox",
-                    label: "Private",
+                    label: zh.inbox,
                     count: state.todos.filter((t) => !t.projectId && !t.done)
                       .length,
                     kind: "system",
@@ -1168,7 +1169,7 @@ export function App({
                   },
                   {
                     key: "done",
-                    label: "Done",
+                    label: zh.done,
                     count: state.todos.filter((t) => t.done).length,
                     kind: "system",
                     prefixIcon: icon.brand,
@@ -1196,35 +1197,35 @@ export function App({
                 return (
                   <Box marginTop={1}>
                     <Text color={tint}>{glyph}</Text>
-                    <Text color={color.muted}>{` ${verb} "`}</Text>
+                    <Text color={color.muted}>{` ${verb === "completed" ? "已完成" : "已重新打开"} “`}</Text>
                     <Text color={color.accent}>{state.toast.title}</Text>
                     <Text color={color.muted}>{'"'}</Text>
                     <Box flexGrow={1} />
-                    <Text color={color.muted}>press </Text>
+                    <Text color={color.muted}>按 </Text>
                     <Text color={color.accent} bold>
                       z
                     </Text>
-                    <Text color={color.muted}> to undo</Text>
+                    <Text color={color.muted}> 撤销</Text>
                   </Box>
                 );
               })()}
             <Box marginTop={1} flexDirection="column">
               {showSpinner ? (
-                <Spinner label="Loading todos…" />
+                <Spinner label="正在加载待办…" />
               ) : visible.length === 0 ? (
                 state.filter === "done" ? (
                   <Text color={color.muted} dimColor>
-                    {"  "}No completions yet. Finished todos land here.
+                    {"  "}还没有已完成的待办。完成后会显示在这里。
                   </Text>
                 ) : state.filter === "today" ? (
                   <Text color={color.muted} dimColor>
-                    {"  "}Nothing due today. Give a todo a due date with{" "}
-                    <Text color={color.accent}>e</Text>.
+                    {"  "}今天没有待办。按{" "}
+                    <Text color={color.accent}>e</Text> 设置截止时间。
                   </Text>
                 ) : (
                   <Text color={color.muted} dimColor>
-                    {"  "}Nothing here. Press{" "}
-                    <Text color={color.accent}>i</Text> to add a todo.
+                    {"  "}这里还没有待办。按{" "}
+                    <Text color={color.accent}>i</Text> 添加。
                   </Text>
                 )
               ) : (
@@ -1264,7 +1265,7 @@ export function App({
         {}
         <Box flexDirection="column" width={rightColW}>
           <TitledPanel
-            title="Activity"
+            title={zh.activity}
             width={rightColW}
             paddingY={1}
             height={activityH}
@@ -1275,13 +1276,13 @@ export function App({
               <Text color={color.muted} dimColor>
                 ▒
               </Text>
-              <Text color={color.muted}>{" Created "}</Text>
+              <Text color={color.muted}>{" 创建 "}</Text>
               <Text color={color.accent}>{sum(createdSeries)}</Text>
               <Text color={color.muted}>{"   "}</Text>
               <Text color={color.accent}>█</Text>
-              <Text color={color.muted}>{" Done "}</Text>
+              <Text color={color.muted}>{" 完成 "}</Text>
               <Text color={color.success}>{sum(doneSeries)}</Text>
-              <Text color={color.muted}>{`   · ${ACTIVITY_DAYS} days`}</Text>
+              <Text color={color.muted}>{`   · ${ACTIVITY_DAYS} 天`}</Text>
             </Box>
             <Box marginTop={1}>
               <DualBarChart
@@ -1296,7 +1297,7 @@ export function App({
             {}
             <Box marginTop={1}>
               <Text color={color.muted} dimColor>
-                {"─ Recent ".padEnd(Math.max(0, rightColW - 4), "─")}
+                {"─ 最近动态 ".padEnd(Math.max(0, rightColW - 4), "─")}
               </Text>
             </Box>
             <Box marginTop={1} flexGrow={1}>
@@ -1305,7 +1306,7 @@ export function App({
           </TitledPanel>
           <Box height={rowGap} />
           <TitledPanel
-            title="Todo Info"
+            title={zh.todoInfo}
             width={rightColW}
             height={todoInfoH}
             paddingY={1}
@@ -1367,7 +1368,7 @@ function StatusPanel({
     : server
       ? color.warn
       : color.muted;
-  const connLabel = serverInfo ? "connected" : server ? "probing…" : "local";
+  const connLabel = serverInfo ? "已连接" : server ? "连接中…" : "本地";
   const showSyncing = useMinHold(syncing, 600);
   const spinnerFrame = useSpinnerFrame(showSyncing);
   return (
@@ -1386,7 +1387,7 @@ function StatusPanel({
         <Text color={connTint}>{icon.on} </Text>
         <Text color={connTint}>{connLabel}</Text>
         {showSyncing && (
-          <Text color={color.muted}>{`  ${spinnerFrame} syncing`}</Text>
+          <Text color={color.muted}>{`  ${spinnerFrame} 同步中`}</Text>
         )}
       </Box>
     </Box>
@@ -1423,7 +1424,7 @@ function TodoRow({
       ? color.accent
       : color.muted;
   const bar = highlighted ? icon.selectBar : " ";
-  const age = relativeTime(nowMs, todo.updatedAt);
+  const age = relativeTimeZh(nowMs, todo.updatedAt);
   const ageWidth = 4;
   const dueAt = todo.dueAt === undefined ? undefined : Number(todo.dueAt);
   const allDay = todo.dueAllDay ?? false;
@@ -1468,15 +1469,15 @@ function TodoRow({
 }
 
 const listHints: ReadonlyArray<readonly [string, string]> = [
-  ["␣", "toggle"],
-  ["i", "todo"],
-  ["p", "project"],
-  ["m", "manage"],
-  ["/", "search"],
-  ["n", "reminders"],
-  ["h/l", "tab"],
-  ["s", "settings"],
-  ["?", "help"],
+  ["␣", "切换完成"],
+  ["i", "添加待办"],
+  ["p", "新建项目"],
+  ["m", "管理项目"],
+  ["/", "搜索"],
+  ["n", "提醒"],
+  ["h/l", "切换标签"],
+  ["s", "设置"],
+  ["?", "帮助"],
 ];
 
 function activeProjectId(filter: Filter): string | undefined {
@@ -1532,9 +1533,9 @@ function XAxis({ days }: { days: number }) {
       </Box>
       <Box width={totalW}>
         <Text color={color.muted}>{" ".repeat(gutter)}</Text>
-        <Text color={color.muted}>{`${days}d ago`}</Text>
+        <Text color={color.muted}>{`${days}天前`}</Text>
         <Box flexGrow={1} />
-        <Text color={color.muted}>today</Text>
+        <Text color={color.muted}>今天</Text>
       </Box>
     </Box>
   );
