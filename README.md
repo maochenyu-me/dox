@@ -2,112 +2,80 @@
   <img src="./docs/dox.png" width="96" alt="dox logo">
 </p>
 
-# dox
+# dox（中文汉化版）
 
-> A quiet home for the things you need to do.
+> 一个安静的待办事项管理工具。
 
-A self-hosted todo app you live in from the terminal — TUI by default, CLI
-for scripts. One Go binary, one SQLite file, optional multi-user via invite.
-
-Self-hosted, so it's yours. On every device, so it's always there. Open to a
-few, when you'd like the company. Small enough to forget you're running it.
+这是 [lin-snow/dox](https://github.com/lin-snow/dox) 的**个人自用汉化分支**，面向 Windows 本地使用做了适配：CLI/TUI 界面已全部汉化为简体中文，并提供 Windows 免安装的 exe。
 
 ![screenshot](./docs/imgs/screenshot.png)
 
-## Features
+## 特性
 
-- TUI by default, CLI for scripts — same server, no separate daemon
-- Projects + Inbox, markdown descriptions, done/undone
-- Due dates + reminders — exact instants or all-day dates, with a durable
-  in-app reminder ledger (no mail/push required)
-- Search across todos and projects
-- Multi-user — first to register owns the server, others join by invite link
-- Activity feed — see who changed what, when
-- One container, one SQLite file — back it up with `cp`
+- 终端优先 — 默认启动 TUI（交互界面），脚本场景用子命令
+- 项目 + 私密收件箱，Markdown 描述，完成/未完成
+- 截止时间 + 提醒 — 支持具体时间或全天日期，应用内提醒列表
+- 会议时间 — 一条待办可附带开始/结束时间，可导出 iCalendar
+- 全文搜索（标题 + 描述）
+- 多用户 — 首个注册者成为所有者，其他人凭邀请码加入
+- 动态流 — 记录谁在何时改了什么
+- 单文件 SQLite，备份就是复制一个文件
 
-## Get started
+## Windows 快速开始
 
-Run the server — one container, one persistent volume:
-
-```bash
-docker run -d --name dox \
-  -p 6278:6278 \
-  -v /opt/dox/data:/app/data \
-  sn0wl1n/dox:latest
-```
-
-Or with Docker Compose — see [`docker/docker-compose.yml`](./docker/docker-compose.yml):
-
-```bash
-docker compose -f docker/docker-compose.yml up -d
-```
-
-Then install the client and point it at the server:
-
-```bash
-npm install -g @l1nsn0w/dox     # or: bun add -g @l1nsn0w/dox
-dox
-```
-
-The TUI handles onboarding (register · login · accept invite) and everything
-after.
-
-## Configuration
-
-| Variable                | Default         | Purpose                                                                                 |
-| ----------------------- | --------------- | --------------------------------------------------------------------------------------- |
-| `DOX_DB_PATH`           | `./data/dox.db` | SQLite file location                                                                    |
-| `DOX_LISTEN_ADDR`       | `:6278`         | HTTP listen address                                                                     |
-| `DOX_LOG_LEVEL`         | `info`          | `debug`, `info`, `warn`, or `error`                                                     |
-| `DOX_EVENT_RETENTION`   | `360h`          | Activity-feed retention; `0` disables the sweep                                         |
-| `DOX_REMINDER_INTERVAL` | `30s`           | How often the due-date reminder sweep runs; `0s` disables it                            |
-| `DOX_REMINDER_GRACE`    | `1h`            | How far back a sweep replays reminders missed while the server was down                 |
-| `DOX_TRUST_PROXY`       | `false`         | Trust `X-Forwarded-For` for auth rate limiting — only enable behind a proxy you control |
-
-The first account to register becomes the owner. After that, registration is
-invite-only by default; the owner can open it with
-`dox server set-registration true`. Login and registration are rate-limited per
-client address, and passwords are hashed with argon2id.
-
-`GET /healthz` is unauthenticated: it returns `200 {"status":"ok"}` when the
-process can reach SQLite, `503` otherwise. The container image uses it as its
-`HEALTHCHECK`.
-
-## Windows local mode
-
-The Windows build is a ZIP containing `dox.exe` and `dox-server.exe`. Push this
-repository to GitHub and open the `windows-build` Actions run; download the
-`dox-windows-amd64` artifact, extract it, and run `dox.exe` in a terminal. The
-CLI starts the bundled server for each command, binds only to `127.0.0.1`, and
-stores data under `%LOCALAPPDATA%\dox`.
+1. 到 [Releases](../../releases) 页面下载 `dox.exe`（或整个 ZIP）
+2. 放到任意目录，在终端运行：
 
 ```powershell
 .\dox.exe
-.\dox.exe list
-.\dox.exe add "Buy milk"
 ```
 
-The first run creates a local account. Local credentials are stored in
-`%LOCALAPPDATA%\dox\profiles\local.toml`; the SQLite database is
-`%LOCALAPPDATA%\dox\data\dox.db`. No Go, Bun, Node.js, Docker, or network
-server is required at runtime.
+首次运行会自动完成本地注册（创建本地账户），然后直接进入 TUI。无需安装
+Go、Bun、Node.js、Docker，全程离线可用。
 
-Remote servers remain available only when explicitly selected:
+本地数据位置：
+
+| 内容          | 路径                                     |
+| ------------- | ---------------------------------------- |
+| SQLite 数据库 | `%LOCALAPPDATA%\dox\data\dox.db`         |
+| 本地账户凭据  | `%LOCALAPPDATA%\dox\profiles\local.toml` |
+
+常用命令：
 
 ```powershell
-.\dox.exe --server https://example.com list
+.\dox.exe list          # 列出待办
+.\dox.exe add "买牛奶"   # 新增待办
+.\dox.exe todo ics      # 导出会议为 iCalendar
+```
+
+### 连接远程服务器（可选）
+
+```powershell
 .\dox.exe login --server https://example.com
+.\dox.exe --server https://example.com list
 ```
 
-Build the ZIP on a development machine with Go, Bun, and the repository's generated sources available:
+## 与上游的差异
 
-```powershell
-buf generate
-bun install
-powershell -ExecutionPolicy Bypass -File scripts/build-windows.ps1
-```
+- CLI/TUI 全部界面文案汉化为简体中文（命令名、参数、快捷键保持不变）
+- 发布产物只保留 Windows 的 `dox.exe` / `dox-server.exe`，已移除 Docker 镜像与 npm 发布
+- 修复 Windows 下 TUI 重绘、日志重定向、独立构建等问题
+- 修复待办编辑器回车跳过会议时间字段的问题
 
-## Development
+## 环境变量（服务端）
+
+| 变量                    | 默认值          | 说明                                |
+| ----------------------- | --------------- | ----------------------------------- |
+| `DOX_DB_PATH`           | `./data/dox.db` | SQLite 文件位置                     |
+| `DOX_LISTEN_ADDR`       | `:6278`         | HTTP 监听地址                       |
+| `DOX_LOG_LEVEL`         | `info`          | `debug` / `info` / `warn` / `error` |
+| `DOX_EVENT_RETENTION`   | `360h`          | 动态流保留时长，`0` 关闭清理        |
+| `DOX_REMINDER_INTERVAL` | `30s`           | 截止提醒扫描间隔，`0s` 关闭         |
+| `DOX_REMINDER_GRACE`    | `1h`            | 服务重启后回补提醒的时间范围        |
+
+本地模式下无需任何配置，全部使用默认值。
+
+## 开发
 
 ```
        ┌──────────┐   ┌──────────┐   ┌──────────┐
@@ -124,16 +92,16 @@ powershell -ExecutionPolicy Bypass -File scripts/build-windows.ps1
                   └─────────────────┘
 ```
 
+需要 Go 1.27+ 和 Bun：
+
 ```bash
-just gen            # proto → Go + TS, sqlc → Go DB bindings
-just serve          # run the server locally
-just cli            # run the CLI against the local server
-just windows-build  # build the Windows amd64 ZIP
+just gen            # 生成 proto / sqlc 代码
+just serve          # 本地跑服务端
+just cli            # 对本地服务端执行 CLI
+just windows-build  # 构建 Windows amd64 ZIP
+just release v1.0.0 # 打 tag 触发 Release 发布
 ```
 
-## Sponsor
+## 许可
 
-A thank-you wall for the people who support my work, alongside a "buy me a
-coffee" link. It lives at [sponsor.sn0w.fyi](https://sponsor.sn0w.fyi).
-
-[AGPL-3.0](LICENSE)
+上游项目以 [AGPL-3.0](LICENSE) 发布，本分支沿用。
