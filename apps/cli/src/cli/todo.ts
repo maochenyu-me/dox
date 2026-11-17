@@ -52,12 +52,12 @@ function meetingFields(
 ): { startsAt: number; endsAt: number } | Record<string, never> {
   if (start === undefined && end === undefined) return {};
   if (start === undefined || end === undefined) {
-    throw new Error("--start and --end must be used together");
+    throw new Error("--start 和 --end 必须同时使用");
   }
   const startsAt = parseFlagWhen(start, "--start").at;
   const endsAt = parseFlagWhen(end, "--end").at;
   if (endsAt <= startsAt) {
-    throw new Error("--end must be after --start");
+    throw new Error("--end 必须晚于 --start");
   }
   return { startsAt, endsAt };
 }
@@ -123,22 +123,22 @@ export const edit = (id: string, opts: TodoEditOpts) =>
         opts.descriptionFile !== undefined
       ) {
         throw new Error(
-          "--clear-description cannot be combined with --description / --description-file",
+          "--clear-description 不能与 --description 或 --description-file 同时使用",
         );
       }
     }
     if (opts.clearDue && opts.due !== undefined) {
-      throw new Error("--clear-due cannot be combined with --due");
+      throw new Error("--clear-due 不能与 --due 同时使用");
     }
     if (opts.clearRemind && opts.remind !== undefined) {
-      throw new Error("--clear-remind cannot be combined with --remind");
+      throw new Error("--clear-remind 不能与 --remind 同时使用");
     }
     if (
       opts.clearMeeting &&
       (opts.start !== undefined || opts.end !== undefined)
     ) {
       throw new Error(
-        "--clear-meeting cannot be combined with --start / --end",
+        "--clear-meeting 不能与 --start 或 --end 同时使用",
       );
     }
 
@@ -166,7 +166,7 @@ export const edit = (id: string, opts: TodoEditOpts) =>
     const touched = Object.values(patch).some((v) => v !== undefined);
     if (!touched) {
       throw new Error(
-        "nothing to update - pass --title, a description flag, --due/--clear-due, --remind/--clear-remind, or --start/--end/--clear-meeting",
+        "没有需要更新的内容。请指定 --title、描述参数、--due/--clear-due、--remind/--clear-remind 或 --start/--end/--clear-meeting",
       );
     }
     const todo = await api.updateTodo(id, patch);
@@ -205,5 +205,5 @@ export const ics = (opts: TodoICSOpts) =>
       return;
     }
     await writeFile(opts.out, body, "utf-8");
-    process.stderr.write(`wrote ${opts.out}\n`);
+    process.stderr.write(`已写入 ${opts.out}\n`);
   });

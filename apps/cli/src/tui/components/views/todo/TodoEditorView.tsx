@@ -172,7 +172,7 @@ export function TodoEditorView({
                 onChange={setRemind}
                 onSubmit={(value) => {
                   setRemind(value);
-                  focus(DESC_FIELD);
+                  focus(MEET_START_FIELD);
                 }}
               />
             )}

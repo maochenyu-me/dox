@@ -34,8 +34,8 @@ export function AboutView({ version, onClose }: AboutViewProps) {
       <Box marginTop={1} justifyContent="center">
         <Text color={color.muted}>
           {shownVersion
-            ? `a quiet home for your todos · ${shownVersion}`
-            : "a quiet home for your todos"}
+            ? `轻松管理待办 · ${shownVersion}`
+            : "轻松管理待办"}
         </Text>
       </Box>
       <Box marginTop={2} justifyContent="center">

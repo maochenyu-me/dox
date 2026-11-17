@@ -570,7 +570,7 @@ export function App({
     if (dueRaw && !due) {
       dispatch({
         type: "LOAD_ERROR",
-        error: `invalid due date "${dueRaw}" - try 2026-11-05, "2026-11-05 09:30", 09:30, or +2h`,
+        error: `截止时间格式无效：“${dueRaw}”。示例：2026-11-05、"2026-11-05 09:30"、09:30 或 +2h`,
       });
       return;
     }
@@ -578,7 +578,7 @@ export function App({
     if (remindRaw && !remind) {
       dispatch({
         type: "LOAD_ERROR",
-        error: `invalid reminder "${remindRaw}" - try 2026-11-05 09:30, 09:30, or +30m`,
+        error: `提醒时间格式无效：“${remindRaw}”。示例：2026-11-05 09:30、09:30 或 +30m`,
       });
       return;
     }
@@ -600,14 +600,14 @@ export function App({
     if (meetStartRaw && (!meetStart || !meetEnd)) {
       dispatch({
         type: "LOAD_ERROR",
-        error: `invalid meeting window - try 2026-11-05 09:30`,
+        error: "会议时间格式无效。示例：2026-11-05 09:30。",
       });
       return;
     }
     if (meetStart && meetEnd && meetEnd.at <= meetStart.at) {
       dispatch({
         type: "LOAD_ERROR",
-        error: "the meeting must end after it starts",
+        error: "会议结束时间必须晚于开始时间。",
       });
       return;
     }
@@ -1030,7 +1030,7 @@ export function App({
     const target = state.deletingProjectId
       ? state.projects.find((p) => p.id === state.deletingProjectId)
       : null;
-    const name = target?.name ?? "this project";
+    const name = target?.name ?? "此项目";
     const todoCount = state.deletingProjectId
       ? state.todos.filter((t) => t.projectId === state.deletingProjectId)
           .length
@@ -1039,11 +1039,11 @@ export function App({
       <ConfirmDialog
         title="删除项目"
         tone={color.danger}
-        footerMode="confirm delete"
+        footerMode="确认删除"
         message={
           <>
             <Text wrap="wrap">
-              Delete project{" "}
+              确定删除项目{" "}
               <Text color={color.accent} bold>
                 {name}
               </Text>
@@ -1052,8 +1052,8 @@ export function App({
             <Box marginTop={1}>
               <Text color={color.muted} wrap="wrap">
                 {todoCount > 0
-                  ? `This also removes ${todoCount} todo${todoCount === 1 ? "" : "s"} in this project. Cannot be undone.`
-                  : "Cannot be undone."}
+              ? `此操作还会删除项目中的 ${todoCount} 条待办，且无法撤销。`
+                  : "此操作无法撤销。"}
               </Text>
             </Box>
           </>
@@ -1143,8 +1143,8 @@ export function App({
               )}
               <Text color={color.muted} dimColor>
                 {state.filter === "today"
-                  ? "sorted by due"
-                  : "sorted by updated"}
+                  ? "按截止时间排序"
+                  : "按更新时间排序"}
               </Text>
             </Box>
             <Box marginTop={1}>

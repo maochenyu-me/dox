@@ -23,9 +23,9 @@ export function ConfirmDialog({
   tone = color.danger,
   confirmKey = "y",
   cancelKey = "n",
-  confirmLabel = "Yes",
-  cancelLabel = "No",
-  footerMode = "confirm",
+  confirmLabel = "确认",
+  cancelLabel = "取消",
+  footerMode = "确认",
 }: ConfirmDialogProps) {
   const { columns, rows: windowRows } = useWindowSize();
   const cols = Math.max(40, columns);
@@ -72,9 +72,9 @@ export function ConfirmDialog({
         version={VERSION}
         outerPadX={1}
         hints={[
-          [confirmKey, confirmLabel.toLowerCase()],
-          [cancelKey, cancelLabel.toLowerCase()],
-          ["esc", "cancel"],
+          [confirmKey, confirmLabel],
+          [cancelKey, cancelLabel],
+          ["esc", "取消"],
         ]}
       />
     </Box>

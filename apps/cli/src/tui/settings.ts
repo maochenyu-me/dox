@@ -57,7 +57,8 @@ function fmtExpiry(expiresAtMs: string): string {
 function inviteSummary(inv: OutgoingInvite): string {
   if (!inv.projectId) return "服务器邀请码";
   const name = inv.projectName || "（项目已删除）";
-  return `${name} · ${inv.role || "editor"}`;
+  const role = inv.role === "viewer" ? "查看者" : "编辑者";
+  return `${name} · ${role}`;
 }
 
 export function buildServerTab(args: BuildSettingsArgs): SettingsTabSpec {
@@ -71,7 +72,7 @@ export function buildServerTab(args: BuildSettingsArgs): SettingsTabSpec {
       detail:
         "服务器的友好名称，会显示在欢迎界面。",
       onEnter: owner ? args.on.editServerName : undefined,
-      enterLabel: "edit",
+      enterLabel: "编辑",
       muted: !s?.serverName,
     },
     {
@@ -82,7 +83,7 @@ export function buildServerTab(args: BuildSettingsArgs): SettingsTabSpec {
       detail:
         "服务器简介，帮助新成员了解即将加入的服务器。",
       onEnter: owner ? args.on.editServerDescription : undefined,
-      enterLabel: "edit",
+      enterLabel: "编辑",
       muted: !s?.serverDescription,
     },
   ];
@@ -90,13 +91,13 @@ export function buildServerTab(args: BuildSettingsArgs): SettingsTabSpec {
     rows.push({
       key: "registration",
       label: "开放注册",
-      value: s ? (s.registrationOpen ? "true" : "false") : "loading…",
+      value: s ? (s.registrationOpen ? "已开启" : "已关闭") : "加载中…",
       detail:
         "开启后，任何拥有服务器地址的人都可以注册；关闭后，新用户需要你的邀请码。",
       onEnter: s
         ? () => args.on.toggleRegistration(!s.registrationOpen)
         : undefined,
-      enterLabel: "toggle",
+      enterLabel: "切换",
     });
   }
   return {
@@ -109,11 +110,11 @@ export function buildServerTab(args: BuildSettingsArgs): SettingsTabSpec {
     hints: owner
       ? [
           ["⏎", "编辑"],
-          ["1/2/3", "tab"],
+          ["1/2/3", "切换标签"],
           ["esc", "关闭"],
         ]
       : [
-          ["1/2/3", "tab"],
+          ["1/2/3", "切换标签"],
           ["esc", "关闭"],
         ],
   };
@@ -137,7 +138,14 @@ export function buildAccountTab(args: BuildSettingsArgs): SettingsTabSpec {
     {
       key: "role",
       label: "角色",
-      value: args.identity.role || "—",
+      value:
+        args.identity.role === "owner"
+          ? "所有者"
+          : args.identity.role === "editor"
+            ? "编辑者"
+            : args.identity.role === "viewer"
+              ? "查看者"
+              : args.identity.role || "—",
       detail:
         "所有者可以修改服务器设置并邀请成员，普通成员不能。",
     },
@@ -147,7 +155,7 @@ export function buildAccountTab(args: BuildSettingsArgs): SettingsTabSpec {
       detail:
         "设置新密码。需要输入当前密码和新密码（至少 8 个字符）。",
       onEnter: args.on.changePassword,
-      enterLabel: "change",
+      enterLabel: "修改",
     },
     {
       key: "sign-out",
@@ -155,7 +163,7 @@ export function buildAccountTab(args: BuildSettingsArgs): SettingsTabSpec {
       detail:
         "退出此设备登录。账户不会被删除，之后可以随时重新登录。",
       onEnter: args.on.signOut,
-      enterLabel: "sign out",
+      enterLabel: "退出登录",
     },
   ];
   return {
@@ -164,7 +172,7 @@ export function buildAccountTab(args: BuildSettingsArgs): SettingsTabSpec {
     rows,
     hints: [
       ["⏎", "打开"],
-      ["1/2/3", "tab"],
+      ["1/2/3", "切换标签"],
       ["esc", "关闭"],
     ],
   };
@@ -176,7 +184,7 @@ export function buildInvitesTab(args: BuildSettingsArgs): SettingsTabSpec {
     label: inviteSummary(inv),
     value: fmtExpiry(inv.expiresAt),
     detail: inv.projectId
-      ? `加入项目 ${inv.projectName || "（项目已删除）"}，角色：${inv.role || "editor"}。${fmtExpiry(inv.expiresAt)}。`
+      ? `加入项目 ${inv.projectName || "（项目已删除）"}，角色：${inv.role === "viewer" ? "查看者" : "编辑者"}。${fmtExpiry(inv.expiresAt)}。`
       : `注册邀请码，任何拥有此邀请码的人都可以在此服务器创建账户。${fmtExpiry(inv.expiresAt)}。`,
     secondary: {
       key: "r",
@@ -191,7 +199,7 @@ export function buildInvitesTab(args: BuildSettingsArgs): SettingsTabSpec {
       label: "兑换邀请码…",
       detail: "粘贴他人分享的邀请码以加入项目。",
       onEnter: args.on.redeemCode,
-      enterLabel: "redeem",
+      enterLabel: "兑换",
     },
   ];
   return {
@@ -204,9 +212,9 @@ export function buildInvitesTab(args: BuildSettingsArgs): SettingsTabSpec {
       : "正在加载邀请…",
     rows,
     hints: [
-      ["⏎", "redeem"],
+      ["⏎", "兑换"],
       ["r", "撤销"],
-      ["1/2/3", "tab"],
+      ["1/2/3", "切换标签"],
       ["esc", "关闭"],
     ],
   };

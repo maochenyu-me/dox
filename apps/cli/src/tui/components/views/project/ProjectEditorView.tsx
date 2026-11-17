@@ -90,53 +90,53 @@ export function ProjectEditorView({
         justifyContent="center"
       >
         <TitledPanel
-          title="New project"
+          title="新建项目"
           width={cardWidth}
           paddingX={2}
           paddingY={1}
           focused
         >
           <Text color={color.muted}>
-            Group related todos. Only the name is required.
+            将相关待办归在一起。只需填写项目名称。
           </Text>
 
-          <FieldRow label="name" active={field === 0}>
+          <FieldRow label="名称" active={field === 0}>
             <TextInput
               isDisabled={field !== 0}
-              placeholder="project name…"
+              placeholder="项目名称…"
               onChange={setName}
               onSubmit={submit}
             />
           </FieldRow>
 
-          <FieldRow label="desc" active={field === 1}>
+          <FieldRow label="描述" active={field === 1}>
             <TextInput
               isDisabled={field !== 1}
-              placeholder="(optional)"
+              placeholder="（可选）"
               onChange={setDescription}
               onSubmit={submit}
             />
           </FieldRow>
 
-          <FieldRow label="color" active={field === 2}>
+          <FieldRow label="颜色" active={field === 2}>
             <ColorPicker idx={paletteIdx} active={field === 2} />
           </FieldRow>
 
           <Box marginTop={1}>
             <Text color={color.muted}>
-              tab to switch fields · ⏎ to save · esc to cancel
+              Tab 切换字段 · ⏎ 保存 · Esc 取消
             </Text>
           </Box>
         </TitledPanel>
       </Box>
       <Footer
-        mode="new project"
+        mode="新建项目"
         version={VERSION}
         outerPadX={1}
         hints={[
-          ["⇥", "field"],
-          ["⏎", "save"],
-          ["esc", "cancel"],
+          ["⇥", "切换字段"],
+          ["⏎", "保存"],
+          ["esc", "取消"],
         ]}
       />
     </Box>

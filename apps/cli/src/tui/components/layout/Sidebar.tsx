@@ -12,11 +12,11 @@ export function filterKey(f: Filter): string {
 }
 
 export function filterLabel(f: Filter, projects: Project[]): string {
-  if (f === "inbox") return "Private";
-  if (f === "done") return "Done";
-  if (f === "today") return "Due";
+  if (f === "inbox") return "私密";
+  if (f === "done") return "已完成";
+  if (f === "today") return "待处理";
   const p = projects.find((p) => p.id === f.id);
-  return p?.name ?? "Project";
+  return p?.name ?? "项目";
 }
 
 interface SidebarProps {
@@ -43,8 +43,8 @@ export function Sidebar({
   counts,
 }: SidebarProps) {
   const rows: Row[] = [
-    { key: "today", label: "Due", count: counts.today },
-    { key: "inbox", label: "Private", count: counts.inbox },
+    { key: "today", label: "待处理", count: counts.today },
+    { key: "inbox", label: "私密", count: counts.inbox },
   ];
   if (projects.length > 0) {
     rows.push({ key: "__divider__", label: "", count: 0, divider: true });

@@ -115,7 +115,7 @@ describe("App (integration smokes)", () => {
   test("empty list shows the add-todo placeholder", async () => {
     const { api } = makeFakeApi([]);
     const { settle } = mountApp(api);
-    await settle((f) => f.includes("Nothing here"));
+    await settle((f) => f.includes("没有待办"));
   });
 
   test("d deletes the cursored todo", async () => {
@@ -124,29 +124,29 @@ describe("App (integration smokes)", () => {
     const { press, settle } = mountApp(api);
     await settle((f) => f.includes("doomed"));
     press("d");
-    await settle((f) => f.includes("Nothing here"));
+    await settle((f) => f.includes("没有待办"));
     expect(deleteMock).toHaveBeenCalledWith(a.id);
   });
 
   test("Ctrl-S with blank title cancels add mode", async () => {
     const { api, createMock } = makeFakeApi([]);
     const { press, settle } = mountApp(api);
-    await settle((f) => f.includes("Nothing here"));
+    await settle((f) => f.includes("没有待办"));
     press("i");
-    await settle((f) => f.includes("New todo"));
+    await settle((f) => f.includes("新建待办"));
     press("\x13");
-    await settle((f) => f.includes("NORMAL"));
+    await settle((f) => f.includes("待办列表"));
     expect(createMock).not.toHaveBeenCalled();
   });
 
   test("? toggles the help overlay", async () => {
     const { api } = makeFakeApi([]);
     const { press, settle } = mountApp(api);
-    await settle((f) => f.includes("Nothing here"));
+    await settle((f) => f.includes("没有待办"));
     press("?");
-    await settle((f) => f.includes("Keyboard shortcuts"));
+    await settle((f) => f.includes("快捷键"));
     press("?");
-    await settle((f) => !f.includes("Keyboard shortcuts"));
+    await settle((f) => !f.includes("快捷键"));
   });
 
   test("/ opens search and narrows results live", async () => {
@@ -158,7 +158,7 @@ describe("App (integration smokes)", () => {
     const { press, settle } = mountApp(api);
     await settle((f) => f.includes("buy milk"));
     press("/");
-    await settle((f) => f.includes("Search") && f.includes("3 todos total"));
+    await settle((f) => f.includes("搜索") && f.includes("3 条待办"));
     press("milk");
     await settle(
       (f) =>
@@ -212,7 +212,7 @@ describe("App (integration smokes)", () => {
     // on the Due tab.
     press("h");
     await settle(
-      (f) => f.includes("sorted by due") && f.includes("overdue thing"),
+      (f) => f.includes("按截止时间排序") && f.includes("overdue thing"),
     );
     expect(lastFrame() ?? "").not.toContain("far future");
   });
@@ -251,10 +251,10 @@ describe("App (integration smokes)", () => {
     // that something fired before you open the list.
     await settle((f) => f.includes("⌛") && f.includes("new"));
     press("n");
-    await settle((f) => f.includes("Reminders") && f.includes("due soon"));
+    await settle((f) => f.includes("提醒") && f.includes("due soon"));
     expect(acked).toBe(1);
     press("\x1b");
-    await settle((f) => f.includes("NORMAL"));
+    await settle((f) => f.includes("待办列表"));
     // Acking on open clears the badge as well as the rows.
     expect(lastFrame() ?? "").not.toContain("new");
   });

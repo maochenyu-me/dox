@@ -15,7 +15,7 @@ function loadOrExit(server?: string): Promise<Config> {
   return loadConfig(profile).then((cfg) => {
     if (!cfg) {
       console.error(
-        "dox: not logged in. Run 'dox register' for local mode or 'dox register --server <url>' for a remote server.",
+        "dox：尚未登录。本地模式请运行 'dox register'，连接远程服务器请运行 'dox register --server <url>'。",
       );
       process.exit(1);
     }
@@ -32,8 +32,8 @@ export async function setDefaultProject(
   cfg.defaultProject = clear ? undefined : value;
   await saveConfig(cfg);
   if (clear) {
-    console.log(`default project cleared (${getConfigPath(cfg.profile ?? getActiveProfile())}).`);
+    console.log(`已清除默认项目（${getConfigPath(cfg.profile ?? getActiveProfile())}）。`);
   } else {
-    console.log(`default project = ${value} (${getConfigPath(cfg.profile ?? getActiveProfile())}).`);
+    console.log(`默认项目已设为 ${value}（${getConfigPath(cfg.profile ?? getActiveProfile())}）。`);
   }
 }

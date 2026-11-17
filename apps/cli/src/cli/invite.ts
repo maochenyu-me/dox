@@ -4,14 +4,15 @@ export const list = (opts: GlobalOpts) =>
   withContext(opts, async ({ invites, output }) => {
     const rows = await invites.listOutgoing();
     if (rows.length === 0) {
-      output.ok("(no outgoing invites)", { invites: rows });
+      output.ok("（没有发出的邀请）", { invites: rows });
       return;
     }
     const lines = rows.map((r) => {
       const hash = r.codeHash.slice(0, 12);
       const expires = new Date(Number(r.expiresAt)).toISOString();
-      const target = r.projectId ? `project=${r.projectName}` : "server-level";
-      return `${hash}…  ${r.role.padEnd(7)}  ${target.padEnd(28)}  expires ${expires}`;
+      const target = r.projectId ? `项目：${r.projectName}` : "服务器级别";
+      const role = r.role === "viewer" ? "查看者" : "编辑者";
+      return `${hash}…  ${role}  ${target}  过期时间：${expires}`;
     });
     output.ok(lines.join("\n"), { invites: rows });
   });

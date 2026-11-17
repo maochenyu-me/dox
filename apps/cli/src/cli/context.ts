@@ -37,7 +37,7 @@ async function buildContext(opts: GlobalOpts): Promise<CliContext> {
   const cfg = await loadConfig(profile);
   if (!cfg) {
     io.stderr.write(
-      "dox: not logged in. Run 'dox register' for local mode or 'dox register --server <url>' for a remote server.\n",
+      "dox：尚未登录。本地模式请运行 'dox register'，连接远程服务器请运行 'dox register --server <url>'。\n",
     );
     process.exit(1);
   }

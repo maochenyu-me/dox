@@ -10,7 +10,7 @@ interface FooterProps {
   outerPadX?: number;
 }
 
-const POWERED_BY = "dox · self-hosted todo";
+const POWERED_BY = "dox · 自托管待办";
 
 export function Footer({ mode, version, hints, outerPadX = 0 }: FooterProps) {
   const { columns: cols } = useWindowSize();

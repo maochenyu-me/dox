@@ -29,7 +29,7 @@ export function SettingsFormModal({
   title,
   fields,
   help,
-  submitLabel = "save",
+  submitLabel = "保存",
   busy = false,
   error,
   onSubmit,

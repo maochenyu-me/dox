@@ -360,7 +360,7 @@ export function Onboarding({ reason = "fresh", onDone }: OnboardingProps) {
               <Box marginTop={1}>
                 <Text color={color.muted}>{">  "}</Text>
                 <TextInput
-                  placeholder="Alice's Dox"
+                  placeholder="小明的 Dox 服务器"
                   onSubmit={submitServerName}
                 />
               </Box>
@@ -376,7 +376,7 @@ export function Onboarding({ reason = "fresh", onDone }: OnboardingProps) {
               <Box marginTop={1}>
                 <Text color={color.muted}>{">  "}</Text>
                 <TextInput
-                  placeholder="family todos"
+                  placeholder="家庭待办"
                   onSubmit={submitServerDesc}
                 />
               </Box>
@@ -463,7 +463,7 @@ function ContextStrip({
   if (info) {
     if (!info.hasUsers) {
       chips.push({
-        label: "mode",
+        label: "模式",
         value: "first user → owner",
         tone: color.accent2,
       });
@@ -471,12 +471,12 @@ function ContextStrip({
       const identity = info.serverName
         ? `${info.serverName}${info.ownerName ? ` · by ${info.ownerName}` : ""}`
         : info.ownerName
-          ? `by ${info.ownerName}`
+          ? `所有者：${info.ownerName}`
           : "(unnamed server)";
       chips.push({ label: "加入", value: identity, tone: color.accent2 });
       chips.push({
-        label: "registration",
-        value: info.registrationOpen ? "open" : "invite-only",
+        label: "注册方式",
+        value: info.registrationOpen ? "开放注册" : "仅限邀请码",
       });
     }
   }

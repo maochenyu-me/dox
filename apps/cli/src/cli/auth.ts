@@ -38,7 +38,7 @@ function serverOrLocal(server?: string): string {
   if (process.env.DOX_ACTIVE_SERVER) return process.env.DOX_ACTIVE_SERVER;
   if (process.platform !== "win32") {
     console.error(
-      "dox: --server <url> is required outside the Windows local package.",
+      "dox：Windows 本地版本以外的环境必须指定 --server <url>。",
     );
     process.exit(1);
   }
@@ -58,7 +58,7 @@ function validUrlOrDie(input: string): URL {
   try {
     return new URL(input);
   } catch {
-    console.error(`dox: invalid server URL: ${input}`);
+    console.error(`dox：服务器地址无效：${input}`);
     process.exit(1);
   }
 }
@@ -69,7 +69,7 @@ async function promptText(
 ): Promise<string> {
   const v = await p.text({ message, placeholder });
   if (p.isCancel(v)) {
-    p.cancel("Cancelled");
+    p.cancel("已取消");
     process.exit(1);
   }
   return v;
@@ -78,7 +78,7 @@ async function promptText(
 async function promptPassword(message: string): Promise<string> {
   const v = await p.password({ message });
   if (p.isCancel(v)) {
-    p.cancel("Cancelled");
+    p.cancel("已取消");
     process.exit(1);
   }
   return v;
@@ -86,14 +86,14 @@ async function promptPassword(message: string): Promise<string> {
 
 export async function loginCmd(opts: LoginOptions): Promise<void> {
   const url = validUrlOrDie(serverOrLocal(opts.server));
-  p.intro(`Log in to ${url.origin}`);
-  const userName = opts.name ?? (await promptText("Username:", "alice"));
-  const password = opts.password ?? (await promptPassword("Password:"));
+  p.intro(`登录到 ${url.origin}`);
+  const userName = opts.name ?? (await promptText("用户名：", "alice"));
+  const password = opts.password ?? (await promptPassword("密码："));
   let result;
   try {
     result = await login(url.origin, { userName, password });
   } catch (err) {
-    p.cancel(`Login failed: ${(err as Error).message}`);
+    p.cancel(`登录失败：${(err as Error).message}`);
     process.exit(1);
   }
   await saveConfig({
@@ -107,23 +107,23 @@ export async function loginCmd(opts: LoginOptions): Promise<void> {
         ? "local"
         : getProfileForServer(url.origin),
   });
-  p.outro(`Logged in as ${result.userName} (${result.role}). Config saved.`);
+  p.outro(`已以 ${result.userName}（${roleLabel(result.role)}）登录，配置已保存。`);
 }
 
 export async function registerCmd(opts: RegisterOptions): Promise<void> {
   const url = validUrlOrDie(serverOrLocal(opts.server));
-  p.intro(`Register with ${url.origin}`);
-  const userName = opts.name ?? (await promptText("Username:", "alice"));
+  p.intro(`在 ${url.origin} 注册账户`);
+  const userName = opts.name ?? (await promptText("用户名：", "alice"));
   const password =
-    opts.password ?? (await promptPassword("Password (min 8 chars):"));
+    opts.password ?? (await promptPassword("密码（至少 8 个字符）："));
   let invite = opts.invite;
   if (!invite) {
     const ans = await p.text({
       message:
-        "Invite code (leave empty if you're the first user or open registration is on):",
+        "邀请码（如果你是首位用户或服务器已开放注册，可留空）：",
     });
     if (p.isCancel(ans)) {
-      p.cancel("Cancelled");
+      p.cancel("已取消");
       process.exit(1);
     }
     invite = ans || undefined;
@@ -136,7 +136,7 @@ export async function registerCmd(opts: RegisterOptions): Promise<void> {
       inviteCode: invite,
     });
   } catch (err) {
-    p.cancel(`Register failed: ${(err as Error).message}`);
+    p.cancel(`注册失败：${(err as Error).message}`);
     process.exit(1);
   }
   await saveConfig({
@@ -150,7 +150,7 @@ export async function registerCmd(opts: RegisterOptions): Promise<void> {
         ? "local"
         : getProfileForServer(url.origin),
   });
-  p.outro(`Registered as ${result.userName} (${result.role}). Config saved.`);
+  p.outro(`已为 ${result.userName}（${roleLabel(result.role)}）创建账户，配置已保存。`);
 }
 
 export async function acceptInviteCmd(
@@ -160,13 +160,13 @@ export async function acceptInviteCmd(
   const profile = opts.server ? getProfileForServer(opts.server) : undefined;
   const cfg = await loadConfig(profile);
   if (cfg) {
-    p.intro(`Accept invite as ${cfg.userName}`);
+    p.intro(`以 ${cfg.userName} 的身份接受邀请`);
     const fetcher = buildFetcher(cfg, realIO());
     try {
       const res = await acceptInvite(fetcher, cfg.server, codeArg);
-      p.outro(`Joined project ${res.projectId} as ${res.role}.`);
+      p.outro(`已加入项目 ${res.projectId}，角色：${roleLabel(res.role)}。`);
     } catch (err) {
-      p.cancel(`Accept failed: ${(err as Error).message}`);
+      p.cancel(`接受邀请失败：${(err as Error).message}`);
       process.exit(1);
     }
     return;
@@ -174,11 +174,11 @@ export async function acceptInviteCmd(
   const server =
     opts.server ??
     process.env.DOX_ACTIVE_SERVER ??
-    (await promptText("Server URL:", "http://127.0.0.1:6278"));
+     (await promptText("服务器地址：", "http://127.0.0.1:6278"));
   try {
     await fetchServerInfo(server);
   } catch (err) {
-    p.cancel(`Cannot reach server: ${(err as Error).message}`);
+    p.cancel(`无法连接服务器：${(err as Error).message}`);
     process.exit(1);
   }
   await registerCmd({
@@ -201,19 +201,26 @@ export async function passwdCmd(opts: PasswdOptions): Promise<void> {
   const profile = opts.server ? getProfileForServer(opts.server) : undefined;
   const cfg = await loadConfig(profile);
   if (!cfg) {
-    console.error("dox: not logged in. Run 'dox login' for local mode or 'dox login --server <url>' for a remote server.");
+    console.error("dox：尚未登录。本地模式请运行 'dox login'，连接远程服务器请运行 'dox login --server <url>'。");
     process.exit(1);
   }
-  const oldPassword = opts.old ?? (await promptPassword("Current password:"));
+  const oldPassword = opts.old ?? (await promptPassword("当前密码："));
   const newPassword =
-    opts.new ?? (await promptPassword("New password (min 8 chars):"));
+    opts.new ?? (await promptPassword("新密码（至少 8 个字符）："));
   const fetcher = buildFetcher(cfg, realIO());
   const users = new UserClient(fetcher, cfg.server);
   try {
     await users.changePassword(oldPassword, newPassword);
   } catch (err) {
-    console.error(`dox: ${(err as Error).message}`);
+    console.error(`dox：${(err as Error).message}`);
     process.exit(1);
   }
   console.log("密码已修改。");
+}
+
+function roleLabel(role: string): string {
+  if (role === "owner") return "所有者";
+  if (role === "editor") return "编辑者";
+  if (role === "viewer") return "查看者";
+  return role;
 }

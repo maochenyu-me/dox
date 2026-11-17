@@ -11,7 +11,7 @@ export const list = (opts: NotificationListOpts) =>
   withContext(opts, async ({ notifications, output }) => {
     const limit = opts.limit === undefined ? undefined : Number(opts.limit);
     if (limit !== undefined && (!Number.isFinite(limit) || limit <= 0)) {
-      throw new Error("--limit must be a positive number");
+      throw new Error("--limit 必须是正数");
     }
     const list = await notifications.list({ limit, unreadOnly: opts.unread });
     output.reminders(list);

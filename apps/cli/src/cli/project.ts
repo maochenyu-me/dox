@@ -16,9 +16,9 @@ export const list = (opts: GlobalOpts) =>
       rows
         .map(
           (p) =>
-            `${p.id.slice(0, 8)}  ${p.archived ? "[archived] " : ""}${p.name}`,
+            `${p.id.slice(0, 8)}  ${p.archived ? "[已归档] " : ""}${p.name}`,
         )
-        .join("\n") || "(no projects)",
+        .join("\n") || "（没有项目）",
       { projects: rows },
     );
   });
@@ -62,7 +62,7 @@ export const invite = (id: string, opts: InviteOpts) =>
     const role = opts.role ?? "editor";
     const inv = await invites.create({ projectId: id, role });
     output.ok(
-      `邀请码：${inv.code}\n角色：    ${inv.role}\n项目：    ${inv.projectId}\n过期时间：${new Date(Number(inv.expiresAt)).toISOString()}`,
+      `邀请码：${inv.code}\n角色：    ${inv.role === "viewer" ? "查看者" : "编辑者"}\n项目：    ${inv.projectId}\n过期时间：${new Date(Number(inv.expiresAt)).toISOString()}`,
       { invite: inv },
     );
   });
@@ -71,7 +71,7 @@ export const members = (id: string, opts: GlobalOpts) =>
   withContext(opts, async ({ projects, output }) => {
     const rows = await projects.listMembers(id);
     output.ok(
-      rows.map((m) => `${m.userId}  ${m.role}`).join("\n") ||
+      rows.map((m) => `${m.userId}  ${m.role === "owner" ? "所有者" : m.role === "viewer" ? "查看者" : "编辑者"}`).join("\n") ||
         "（没有其他成员，仅所有者）",
       { members: rows },
     );

@@ -83,7 +83,7 @@ export function ProjectManageView({
           mode="manage"
           version={VERSION}
           outerPadX={1}
-          hints={[["esc", "back"]]}
+          hints={[["esc", "返回"]]}
         />
       </Box>
     );
@@ -113,7 +113,7 @@ export function ProjectManageView({
         justifyContent="center"
       >
         <TitledPanel
-          title={`Project · ${project.name}`}
+          title={`项目 · ${project.name}`}
           width={cardWidth}
           paddingX={2}
           paddingY={1}
@@ -149,11 +149,11 @@ export function ProjectManageView({
           {isOwner && (
             <Box marginTop={1}>
               <Text color={color.muted}>
-                Press{" "}
+                按{" "}
                 <Text color={color.accent} bold>
                   i
                 </Text>{" "}
-                邀请新用户。
+                邀请新成员。
               </Text>
             </Box>
           )}
@@ -167,9 +167,9 @@ export function ProjectManageView({
           isOwner
             ? [
                 ["i", "邀请"],
-                ["esc", "back"],
+                ["esc", "返回"],
               ]
-            : [["esc", "back"]]
+            : [["esc", "返回"]]
         }
       />
     </Box>
@@ -198,7 +198,7 @@ function Header({
         <Box marginLeft={2}>
           <Text color={color.muted}>
             {membersLoaded
-              ? `${memberCount} member${memberCount === 1 ? "" : "s"}`
+              ? `${memberCount} 位成员`
               : "—"}
           </Text>
         </Box>
@@ -219,11 +219,13 @@ function MemberRow({ m, nowMs }: { m: ProjectMember; nowMs: number }) {
     <Box>
       <Text>{`  ${label}`}</Text>
       <Box marginLeft={2}>
-        <Text color={roleTint}>{m.role}</Text>
+        <Text color={roleTint}>
+          {m.role === "editor" ? "编辑者" : m.role === "viewer" ? "查看者" : m.role}
+        </Text>
       </Box>
       <Box marginLeft={2}>
         <Text color={color.muted} dimColor>
-          added {relativeTime(Number(m.addedAt), nowMs)}
+          {relativeTime(Number(m.addedAt), nowMs)}加入
         </Text>
       </Box>
     </Box>
@@ -262,9 +264,9 @@ function InvitePickerModal({
           </Text>
           <Box marginTop={1} justifyContent="center">
             <Text color={color.accent} bold>{`[e]`}</Text>
-            <Text color={color.muted}>{` editor    `}</Text>
+            <Text color={color.muted}>{` 编辑者    `}</Text>
             <Text color={color.accent2} bold>{`[v]`}</Text>
-            <Text color={color.muted}>{` viewer`}</Text>
+            <Text color={color.muted}>{` 查看者`}</Text>
           </Box>
           {error && (
             <Box marginTop={1}>
@@ -288,9 +290,9 @@ function InvitePickerModal({
         version={VERSION}
         outerPadX={1}
         hints={[
-          ["e", "editor"],
-          ["v", "viewer"],
-          ["esc", "cancel"],
+          ["e", "编辑者"],
+          ["v", "查看者"],
+          ["esc", "取消"],
         ]}
       />
     </Box>
@@ -333,8 +335,8 @@ function CodeRevealModal({
           borderTint={color.accent}
         >
           <Text wrap="wrap">
-            新的 {role} 邀请，项目： <Text bold>{projectName}</Text>. Share this
-            code with the user you want to add.{" "}
+            新的{role === "editor" ? "编辑者" : "查看者"}邀请，项目：
+            <Text bold>{projectName}</Text>。请将此邀请码分享给要添加的成员。{" "}
             <Text color={color.danger} bold>
               此邀请码只会显示一次。
             </Text>
@@ -356,7 +358,7 @@ function CodeRevealModal({
         mode="invite"
         version={VERSION}
         outerPadX={1}
-        hints={[["any", "close"]]}
+        hints={[["任意键", "关闭"]]}
       />
     </Box>
   );

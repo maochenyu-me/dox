@@ -12,7 +12,7 @@ export async function readDescription(opts: {
   descriptionFile?: string;
 }): Promise<string | undefined> {
   if (opts.description !== undefined && opts.descriptionFile !== undefined) {
-    throw new Error("use either --description or --description-file, not both");
+    throw new Error("--description 和 --description-file 不能同时使用");
   }
   if (opts.description !== undefined) return opts.description;
   if (opts.descriptionFile === undefined) return undefined;
@@ -40,7 +40,7 @@ export function parseFlagWhen(raw: string, flag: string): DueInput {
   const parsed = parseWhen(raw);
   if (!parsed) {
     throw new Error(
-      `invalid ${flag} "${raw}" - try 2026-11-05, "2026-11-05 09:30", 09:30, or +2h`,
+      `${flag} 时间格式无效：“${raw}”。示例：2026-11-05、"2026-11-05 09:30"、09:30 或 +2h`,
     );
   }
   return parsed;

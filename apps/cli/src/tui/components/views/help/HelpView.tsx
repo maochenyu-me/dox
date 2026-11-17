@@ -12,12 +12,12 @@ const navigate: ReadonlyArray<readonly [string, string]> = [
   ["j / ↓", "向下移动"],
   ["k / ↑", "向上移动"],
   ["h / l", "切换侧栏/列表"],
-  ["tab", "下一个筛选"],
+  ["Tab", "下一个筛选"],
   ["g / G", "第一个 / 最后一个"],
 ];
 
 const act: ReadonlyArray<readonly [string, string]> = [
-  ["space", "切换完成状态"],
+  ["空格", "切换完成状态"],
   ["i / a", "添加待办"],
   ["e", "编辑待办"],
   ["d", "删除待办"],
@@ -82,9 +82,9 @@ export function HelpView({ onClose }: HelpViewProps) {
         version={VERSION}
         outerPadX={1}
         hints={[
-          ["?", "back"],
-          ["esc", "back"],
-          ["⏎", "back"],
+          ["?", "返回"],
+          ["esc", "返回"],
+          ["⏎", "返回"],
         ]}
       />
     </Box>
@@ -102,7 +102,7 @@ function Section({
 }) {
   return (
     <Box flexDirection="column" marginTop={marginTop ? 1 : 0}>
-      <Text color={color.muted}>{title.toUpperCase()}</Text>
+      <Text color={color.muted}>{title}</Text>
       {rows.map(([k, l]) => (
         <Box key={k}>
           <Box width={14}>

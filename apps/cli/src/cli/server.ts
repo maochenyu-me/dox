@@ -7,7 +7,8 @@ interface InviteOpts extends GlobalOpts {
 export const me = (opts: GlobalOpts) =>
   withContext(opts, async ({ users, output }) => {
     const u = await users.me();
-    output.ok(`${u.name} (${u.role})  id=${u.id}`, { user: u });
+    const role = u.role === "owner" ? "所有者" : u.role === "viewer" ? "查看者" : "编辑者";
+    output.ok(`${u.name}（${role}）  id=${u.id}`, { user: u });
   });
 
 export const listUsers = (opts: GlobalOpts) =>
@@ -15,8 +16,11 @@ export const listUsers = (opts: GlobalOpts) =>
     const rows = await users.list();
     output.ok(
       rows
-        .map((u) => `${u.id.slice(0, 8)}  ${u.role.padEnd(7)}  ${u.name}`)
-        .join("\n") || "(no users)",
+        .map((u) => {
+          const role = u.role === "owner" ? "所有者" : u.role === "viewer" ? "查看者" : "编辑者";
+          return `${u.id.slice(0, 8)}  ${role}  ${u.name}`;
+        })
+        .join("\n") || "（没有用户）",
       { users: rows },
     );
   });
@@ -34,19 +38,19 @@ export const setRegistrationOpen = (value: string, opts: GlobalOpts) =>
   withContext(opts, async ({ users, output }) => {
     const open = value === "true" || value === "1";
     const s = await users.updateSettings({ registrationOpen: open });
-    output.ok(`registration_open = ${s.registrationOpen}`, { settings: s });
+    output.ok(`开放注册：${s.registrationOpen ? "已开启" : "已关闭"}`, { settings: s });
   });
 
 export const setServerName = (name: string, opts: GlobalOpts) =>
   withContext(opts, async ({ users, output }) => {
     const s = await users.updateSettings({ serverName: name });
-    output.ok(`server_name = ${s.serverName || "(empty)"}`, { settings: s });
+    output.ok(`服务器名称：${s.serverName || "（空）"}`, { settings: s });
   });
 
 export const setServerDescription = (desc: string, opts: GlobalOpts) =>
   withContext(opts, async ({ users, output }) => {
     const s = await users.updateSettings({ serverDescription: desc });
-    output.ok(`server_description = ${s.serverDescription || "(empty)"}`, {
+    output.ok(`服务器描述：${s.serverDescription || "（空）"}`, {
       settings: s,
     });
   });

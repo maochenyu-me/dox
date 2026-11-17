@@ -34,13 +34,13 @@ export function SettingsModal({
   if (editing.kind === "serverName") {
     return (
       <SettingsFormModal
-        title="Edit Server Name"
-        help="Up to 64 chars. Shown on the login screen and dashboard header."
+        title="编辑服务器名称"
+        help="最多 64 个字符，将显示在登录页和主界面标题栏。"
         fields={[
           {
             key: "name",
-            label: "name",
-            placeholder: "my dox server…",
+            label: "名称",
+            placeholder: "我的 dox 服务器…",
             initial: state.settingsServer?.serverName ?? "",
           },
         ]}
@@ -67,13 +67,13 @@ export function SettingsModal({
   if (editing.kind === "serverDescription") {
     return (
       <SettingsFormModal
-        title="Edit Description"
-        help="Up to 256 characters. Shown to anyone who connects to this server."
+        title="编辑服务器描述"
+        help="最多 256 个字符，连接到此服务器的用户都可以看到。"
         fields={[
           {
             key: "description",
-            label: "description",
-            placeholder: "a short blurb…",
+            label: "描述",
+            placeholder: "简短介绍…",
             initial: state.settingsServer?.serverDescription ?? "",
           },
         ]}
@@ -102,11 +102,11 @@ export function SettingsModal({
   if (editing.kind === "changePassword") {
     return (
       <SettingsFormModal
-        title="Change Password"
-        help="Enter your current password, then a new one (at least 8 characters). It stays visible while you type."
+        title="修改密码"
+        help="请输入当前密码和新密码（至少 8 个字符）。输入内容会直接显示。"
         fields={[
-          { key: "old", label: "current", placeholder: "current password" },
-          { key: "new", label: "new", placeholder: "new password (8+ chars)" },
+          { key: "old", label: "当前密码", placeholder: "当前密码" },
+          { key: "new", label: "新密码", placeholder: "新密码（至少 8 个字符）" },
         ]}
         busy={state.settingsBusy}
         error={state.settingsError}
@@ -115,7 +115,7 @@ export function SettingsModal({
           if ((vals.new ?? "").length < 8) {
             dispatch({
               type: "SETTINGS_ERROR",
-              error: "new password must be at least 8 characters",
+              error: "新密码至少需要 8 个字符。",
             });
             return;
           }
@@ -136,10 +136,10 @@ export function SettingsModal({
   if (editing.kind === "redeemCode") {
     return (
       <SettingsFormModal
-        title="Redeem Invite Code"
-        help="Paste a project invite code someone shared with you."
-        submitLabel="redeem"
-        fields={[{ key: "code", label: "code", placeholder: "ABC-12345" }]}
+        title="兑换邀请码"
+        help="粘贴他人分享给你的项目邀请码。"
+        submitLabel="兑换"
+        fields={[{ key: "code", label: "邀请码", placeholder: "ABC-12345" }]}
         busy={state.settingsBusy}
         error={state.settingsError}
         onSubmit={async (vals) => {
@@ -157,12 +157,12 @@ export function SettingsModal({
             await onRefresh?.();
             dispatch({ type: "SETTINGS_BUSY", busy: false });
             dispatch({ type: "SETTINGS_EDIT", editing: null });
-            const role = res.role || "member";
+            const role = res.role === "viewer" ? "查看者" : "编辑者";
             const notice = name
-              ? `Joined "${name}" as ${role}.`
+              ? `已加入“${name}”，角色：${role}。`
               : res.projectId
-                ? `Joined project as ${role}.`
-                : "Invite accepted.";
+                ? `已加入项目，角色：${role}。`
+                : "已接受邀请。";
             dispatch({ type: "SETTINGS_NOTICE", notice });
           } catch (err) {
             dispatch({ type: "SETTINGS_ERROR", error: (err as Error).message });
@@ -177,11 +177,11 @@ export function SettingsModal({
     const next = editing.next;
     return (
       <ConfirmAction
-        title={next ? "Open Registration" : "Close Registration"}
+        title={next ? "开放注册" : "关闭注册"}
         message={
           next
-            ? "Anyone with the server URL will be able to register a new account. Continue?"
-            : "Registration will require a server invite issued by you. Existing users keep access. Continue?"
+            ? "任何知道服务器地址的人都可以注册新账户。是否继续？"
+            : "注册将需要你发出的服务器邀请码。现有用户不受影响。是否继续？"
         }
         tone={next ? color.accent2 : color.accent}
         busy={state.settingsBusy}
@@ -207,8 +207,8 @@ export function SettingsModal({
   if (editing.kind === "signOut") {
     return (
       <ConfirmAction
-        title="Sign Out"
-        message="You'll need to sign in again. The server address is kept."
+        title="退出登录"
+        message="你之后需要重新登录，服务器地址会保留。"
         tone={color.danger}
         busy={state.settingsBusy}
         error={state.settingsError}
@@ -243,13 +243,13 @@ export function SettingsModal({
     );
     const label = inv
       ? inv.projectId
-        ? `${inv.projectName || "(deleted project)"} · ${inv.role || "editor"}`
-        : "Server invite"
-      : "this invite";
+        ? `${inv.projectName || "（项目已删除）"} · ${inv.role === "viewer" ? "查看者" : "编辑者"}`
+        : "服务器邀请码"
+      : "此邀请码";
     return (
       <ConfirmAction
-        title="Revoke Invite"
-        message={`Revoke "${label}"? The code becomes invalid immediately.`}
+        title="撤销邀请码"
+        message={`确定撤销“${label}”？该邀请码将立即失效。`}
         tone={color.danger}
         busy={state.settingsBusy}
         error={state.settingsError}

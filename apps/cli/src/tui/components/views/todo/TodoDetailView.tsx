@@ -176,10 +176,10 @@ export function TodoDetailView({
         version={VERSION}
         outerPadX={1}
         hints={[
-          ["␣", "toggle"],
-          ["e", "edit"],
-          ["d", "delete"],
-          ["esc", "back"],
+          ["␣", todo.done ? "重新打开" : "标记完成"],
+          ["e", "编辑"],
+          ["d", "删除"],
+          ["esc", "返回"],
         ]}
       />
     </Box>
