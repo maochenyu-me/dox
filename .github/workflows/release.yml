@@ -130,26 +130,14 @@ jobs:
       - name: Download binaries
         uses: actions/download-artifact@v8
         with:
-          pattern: dox-*
+          pattern: dox-windows-exe
           path: ./artifacts
           merge-multiple: true
-
-      - name: Package tarballs
-        working-directory: ./artifacts
-        run: |
-          set -euo pipefail
-          for bin in dox-server-linux-*; do
-            [ -f "$bin" ] || continue
-            chmod +x "$bin"
-            tar -czf "${bin}.tar.gz" "$bin"
-          done
 
       - name: Create draft release
         uses: softprops/action-gh-release@v3
         with:
           files: |
-            ./artifacts/*.tar.gz
-            ./artifacts/dox-windows-amd64.zip
             ./artifacts/dox.exe
             ./artifacts/dox-server.exe
           draft: true
