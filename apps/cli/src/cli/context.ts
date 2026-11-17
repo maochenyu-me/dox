@@ -8,6 +8,7 @@ import {
   TodoClient,
   UserClient,
   buildFetcher,
+  getProfileForServer,
   loadConfig,
   realIO,
 } from "@dox/core";
@@ -27,14 +28,16 @@ export interface CliContext {
 
 export interface GlobalOpts {
   json?: boolean;
+  server?: string;
 }
 
 async function buildContext(opts: GlobalOpts): Promise<CliContext> {
   const io = realIO();
-  const cfg = await loadConfig();
+  const profile = opts.server ? getProfileForServer(opts.server) : undefined;
+  const cfg = await loadConfig(profile);
   if (!cfg) {
     io.stderr.write(
-      "dox: not logged in. Run 'dox register --server <url>' first.\n",
+      "dox: not logged in. Run 'dox register' for local mode or 'dox register --server <url>' for a remote server.\n",
     );
     process.exit(1);
   }

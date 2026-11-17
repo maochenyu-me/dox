@@ -5,7 +5,9 @@ import {
   buildFetcher,
   clearConfig,
   fetchServerInfo,
+  getActiveProfile,
   getConfigPath,
+  getProfileForServer,
   loadConfig,
   login,
   realIO,
@@ -17,19 +19,33 @@ import {
 import type { GlobalOpts } from "./context";
 
 interface LoginOptions {
-  server: string;
+  server?: string;
   name?: string;
   password?: string;
 }
 
 interface RegisterOptions {
-  server: string;
+  server?: string;
   name?: string;
   password?: string;
   invite?: string;
 }
 
-interface AcceptOptions {
+const LOCAL_SERVER = "http://127.0.0.1:6278";
+
+function serverOrLocal(server?: string): string {
+  if (server) return server;
+  if (process.env.DOX_ACTIVE_SERVER) return process.env.DOX_ACTIVE_SERVER;
+  if (process.platform !== "win32") {
+    console.error(
+      "dox: --server <url> is required outside the Windows local package.",
+    );
+    process.exit(1);
+  }
+  return LOCAL_SERVER;
+}
+
+interface AcceptOptions extends GlobalOpts {
   server?: string;
 }
 
@@ -69,7 +85,7 @@ async function promptPassword(message: string): Promise<string> {
 }
 
 export async function loginCmd(opts: LoginOptions): Promise<void> {
-  const url = validUrlOrDie(opts.server);
+  const url = validUrlOrDie(serverOrLocal(opts.server));
   p.intro(`Log in to ${url.origin}`);
   const userName = opts.name ?? (await promptText("Username:", "alice"));
   const password = opts.password ?? (await promptPassword("Password:"));
@@ -86,12 +102,16 @@ export async function loginCmd(opts: LoginOptions): Promise<void> {
     userId: result.userId,
     userName: result.userName,
     role: result.role,
+    profile:
+      process.env.DOX_LOCAL_MODE === "1"
+        ? "local"
+        : getProfileForServer(url.origin),
   });
   p.outro(`Logged in as ${result.userName} (${result.role}). Config saved.`);
 }
 
 export async function registerCmd(opts: RegisterOptions): Promise<void> {
-  const url = validUrlOrDie(opts.server);
+  const url = validUrlOrDie(serverOrLocal(opts.server));
   p.intro(`Register with ${url.origin}`);
   const userName = opts.name ?? (await promptText("Username:", "alice"));
   const password =
@@ -125,6 +145,10 @@ export async function registerCmd(opts: RegisterOptions): Promise<void> {
     userId: result.userId,
     userName: result.userName,
     role: result.role,
+    profile:
+      process.env.DOX_LOCAL_MODE === "1"
+        ? "local"
+        : getProfileForServer(url.origin),
   });
   p.outro(`Registered as ${result.userName} (${result.role}). Config saved.`);
 }
@@ -133,7 +157,8 @@ export async function acceptInviteCmd(
   codeArg: string,
   opts: AcceptOptions,
 ): Promise<void> {
-  const cfg = await loadConfig();
+  const profile = opts.server ? getProfileForServer(opts.server) : undefined;
+  const cfg = await loadConfig(profile);
   if (cfg) {
     p.intro(`Accept invite as ${cfg.userName}`);
     const fetcher = buildFetcher(cfg, realIO());
@@ -147,29 +172,36 @@ export async function acceptInviteCmd(
     return;
   }
   const server =
-    opts.server ?? (await promptText("Server URL:", "http://localhost:6278"));
+    opts.server ??
+    process.env.DOX_ACTIVE_SERVER ??
+    (await promptText("Server URL:", "http://127.0.0.1:6278"));
   try {
     await fetchServerInfo(server);
   } catch (err) {
     p.cancel(`Cannot reach server: ${(err as Error).message}`);
     process.exit(1);
   }
-  await registerCmd({ server, invite: codeArg });
+  await registerCmd({
+    ...(process.env.DOX_LOCAL_MODE === "1" ? {} : { server }),
+    invite: codeArg,
+  });
 }
 
-export async function logoutCmd(): Promise<void> {
-  const removed = await clearConfig();
+export async function logoutCmd(opts: GlobalOpts = {}): Promise<void> {
+  const profile = opts.server ? getProfileForServer(opts.server) : undefined;
+  const removed = await clearConfig(profile);
   if (removed) {
-    console.log(`logged out — ${getConfigPath()} removed.`);
+    console.log(`logged out — ${getConfigPath(profile ?? getActiveProfile())} removed.`);
   } else {
     console.log("no config to remove — already logged out.");
   }
 }
 
 export async function passwdCmd(opts: PasswdOptions): Promise<void> {
-  const cfg = await loadConfig();
+  const profile = opts.server ? getProfileForServer(opts.server) : undefined;
+  const cfg = await loadConfig(profile);
   if (!cfg) {
-    console.error("dox: not logged in. Run 'dox login --server <url>' first.");
+    console.error("dox: not logged in. Run 'dox login' for local mode or 'dox login --server <url>' for a remote server.");
     process.exit(1);
   }
   const oldPassword = opts.old ?? (await promptPassword("Current password:"));

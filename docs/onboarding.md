@@ -195,10 +195,13 @@ am I on the right server?" confusion before they type a password.
 
 ## What ends up on disk
 
-On success, `saveConfig` writes `~/.config/dox/config.toml`:
+On success, `saveConfig` writes the active profile. On Windows local mode this is
+`%LOCALAPPDATA%\\dox\\profiles\\local.toml`; remote profiles use a stable
+`remote-*.toml` name. A local profile stores `server = "local"` because its
+HTTP port is selected anew for each CLI process:
 
 ```toml
-server     = "https://dox.example.com"
+server     = "local"
 token      = "<JWT>"
 user_id    = "01J..."
 user_name  = "alice"
@@ -211,7 +214,8 @@ the client could derive most of this by base64-decoding the token, but we
 mirror it into the file so cold-start TUI rendering doesn't need to parse
 the token first.
 
-Source: `packages/core/src/config/index.ts`.
+Source: `packages/core/src/config/index.ts`. On Windows, the old
+`~/.config/dox/config.toml` remote profile is migrated on first access.
 
 ## Reauth path
 

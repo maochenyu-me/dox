@@ -10,12 +10,28 @@ import * as project from "./cli/project";
 import * as server from "./cli/server";
 import * as todo from "./cli/todo";
 import { displayVersion } from "./version";
+import {
+  installRuntimeSignalHandlers,
+  startRuntime,
+  stopRuntime,
+} from "./runtime";
 
 const args = process.argv.slice(2);
+
+if (!args.includes("--help") && !args.includes("-h") && args[0] !== "--version" && args[0] !== "-V" && args[0] !== "version") {
+  try {
+    await startRuntime(args);
+    installRuntimeSignalHandlers();
+  } catch (err) {
+    console.error(`dox: ${(err as Error).message}`);
+    process.exit(1);
+  }
+}
 
 if (args.length === 0 && process.stdout.isTTY) {
   const { runTui } = await import("./tui");
   await runTui();
+  await stopRuntime();
   process.exit(0);
 }
 
@@ -29,33 +45,43 @@ program
   .name("dox")
   .description("A quiet home for your todos")
   .version(displayVersion() || "local")
-  .option("--json", "output JSON for machine consumption");
+  .option("--json", "output JSON for machine consumption")
+  .option(
+    "--server <url>",
+    "use a remote server explicitly (default: local server)",
+  );
 
 program
   .command("register")
   .description(
     "Create an account on a dox server (first user becomes the owner)",
   )
-  .requiredOption("--server <url>", "server URL, e.g. http://localhost:6278")
+  .option("--server <url>", "remote server URL")
   .option("--name <username>", "username")
   .option("--password <password>", "password (min 8 chars)")
   .option("--invite <code>", "invite code (required if registration is closed)")
-  .action(auth.registerCmd);
+  .action(function (this: Command) {
+    return auth.registerCmd(this.optsWithGlobals());
+  });
 
 program
   .command("login")
   .description("Log in to an existing account on a dox server")
-  .requiredOption("--server <url>", "server URL, e.g. http://localhost:6278")
+  .option("--server <url>", "remote server URL")
   .option("--name <username>", "username")
   .option("--password <password>", "password")
-  .action(auth.loginCmd);
+  .action(function (this: Command) {
+    return auth.loginCmd(this.optsWithGlobals());
+  });
 
 program
   .command("logout")
   .description(
     "Remove local credentials. Server-side token expires on its own.",
   )
-  .action(auth.logoutCmd);
+  .action(function (this: Command) {
+    return auth.logoutCmd(this.optsWithGlobals());
+  });
 
 program
   .command("passwd")
@@ -71,8 +97,10 @@ program
   .description(
     "Accept an invite (joins a project, or registers + joins if not logged in)",
   )
-  .option("--server <url>", "server URL (only needed if not logged in)")
-  .action(auth.acceptInviteCmd);
+  .option("--server <url>", "remote server URL (default: local)")
+  .action(function (this: Command, code: string) {
+    return auth.acceptInviteCmd(code, this.optsWithGlobals());
+  });
 
 program
   .command("list")
@@ -324,7 +352,7 @@ inv
 
 const cfg = program
   .command("config")
-  .description("Read / write ~/.config/dox/config.toml");
+  .description("Read / write the active dox profile");
 cfg
   .command("default-project <value>")
   .description(
@@ -334,4 +362,8 @@ cfg
     return config.setDefaultProject(value, this.optsWithGlobals());
   });
 
-await program.parseAsync(process.argv);
+try {
+  await program.parseAsync(process.argv);
+} finally {
+  await stopRuntime();
+}

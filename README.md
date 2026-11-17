@@ -73,6 +73,40 @@ client address, and passwords are hashed with argon2id.
 process can reach SQLite, `503` otherwise. The container image uses it as its
 `HEALTHCHECK`.
 
+## Windows local mode
+
+The Windows build is a ZIP containing `dox.exe` and `dox-server.exe`. Push this
+repository to GitHub and open the `windows-build` Actions run; download the
+`dox-windows-amd64` artifact, extract it, and run `dox.exe` in a terminal. The
+CLI starts the bundled server for each command, binds only to `127.0.0.1`, and
+stores data under `%LOCALAPPDATA%\dox`.
+
+```powershell
+.\dox.exe
+.\dox.exe list
+.\dox.exe add "Buy milk"
+```
+
+The first run creates a local account. Local credentials are stored in
+`%LOCALAPPDATA%\dox\profiles\local.toml`; the SQLite database is
+`%LOCALAPPDATA%\dox\data\dox.db`. No Go, Bun, Node.js, Docker, or network
+server is required at runtime.
+
+Remote servers remain available only when explicitly selected:
+
+```powershell
+.\dox.exe --server https://example.com list
+.\dox.exe login --server https://example.com
+```
+
+Build the ZIP on a development machine with Go, Bun, and the repository's generated sources available:
+
+```powershell
+buf generate
+bun install
+powershell -ExecutionPolicy Bypass -File scripts/build-windows.ps1
+```
+
 ## Development
 
 ```
@@ -94,6 +128,7 @@ process can reach SQLite, `503` otherwise. The container image uses it as its
 just gen            # proto → Go + TS, sqlc → Go DB bindings
 just serve          # run the server locally
 just cli            # run the CLI against the local server
+just windows-build  # build the Windows amd64 ZIP
 ```
 
 ## Sponsor

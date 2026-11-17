@@ -7,6 +7,7 @@ import {
   type Config,
   type ServerInfo,
   fetchServerInfo,
+  getProfileForServer,
   login,
   register,
   saveConfig,
@@ -34,7 +35,8 @@ type Intent = "first-user" | "login" | "register";
 
 export type OnboardingReason = "fresh" | "reauth";
 
-const DEFAULT_SERVER = "http://localhost:6278";
+const DEFAULT_SERVER =
+  process.env.DOX_ACTIVE_SERVER || "http://127.0.0.1:6278";
 const STEPS = ["Server", "Method", "Account", "Password"] as const;
 const MIN_PASSWORD_LEN = 8;
 
@@ -101,6 +103,10 @@ export function Onboarding({ reason = "fresh", onDone }: OnboardingProps) {
         }
         const cfg: Config = {
           server,
+          profile:
+            process.env.DOX_LOCAL_MODE === "1"
+              ? "local"
+              : getProfileForServer(server),
           token: result.token,
           userId: result.userId,
           userName: result.userName,

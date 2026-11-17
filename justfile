@@ -127,7 +127,7 @@ desktop-test:
 install:
     bun install
 
-# Run cli (pass args after --, e.g. `just cli -- login --server http://localhost:6278`)
+# Run cli (pass args after --, e.g. `just cli -- list` or `--server <url> list`)
 cli *ARGS:
     bun run apps/cli/src/index.ts {{ARGS}}
 
@@ -141,6 +141,11 @@ cli-test:
 # DOX_CLI_VERSION = the pushed tag.
 cli-build:
     bun run scripts/build-cli.ts
+
+# Build the Windows amd64 ZIP. Requires Go and Bun on the build machine;
+# end users only need the resulting ZIP.
+windows-build:
+    powershell -NoProfile -ExecutionPolicy Bypass -File scripts/build-windows.ps1
 
 # === Docker ===
 

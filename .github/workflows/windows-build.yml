@@ -1,0 +1,60 @@
+name: windows-build
+
+on:
+  push:
+    branches: ["**"]
+    paths:
+      - "apps/cli/**"
+      - "apps/server/**"
+      - "packages/core/**"
+      - "packages/proto-gen/**"
+      - "proto/**"
+      - "scripts/build-windows.ps1"
+      - "bun.lock"
+      - ".github/workflows/windows-build.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-windows:
+    name: Build Windows amd64 ZIP
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-go@v6
+        with:
+          go-version: "1.27.3"
+          cache-dependency-path: apps/server/go.sum
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - uses: bufbuild/buf-setup-action@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Generate protocol sources
+        shell: pwsh
+        run: buf generate
+
+      - name: Install JavaScript dependencies
+        shell: pwsh
+        run: bun install --frozen-lockfile
+
+      - name: Build Windows package
+        shell: pwsh
+        env:
+          SERVER_VERSION: ci-${{ github.sha }}
+        run: ./scripts/build-windows.ps1
+
+      - name: Upload Windows ZIP
+        uses: actions/upload-artifact@v7
+        with:
+          name: dox-windows-amd64
+          path: dist/dox-windows-amd64.zip
+          if-no-files-found: error
+          retention-days: 14
