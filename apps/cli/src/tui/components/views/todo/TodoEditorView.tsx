@@ -51,6 +51,21 @@ const DESC_FIELD = "todo-editor:description";
 
 const WHEN_HINT = '2026-11-05 · "2026-11-05 09:30" · 09:30 · +2h';
 
+/**
+ * A value that could still become a valid date/time if the user kept typing
+ * ("2026-", "2026-11-18 0", "+2"). The live hint stays quiet for these so the
+ * error row does not flicker in and out of the frame on every keystroke.
+ */
+function looksLikeIncompleteWhen(raw: string): boolean {
+  const s = raw.trim();
+  if (s === "") return true;
+  if (/^\+\s*\d*\s*[mhdw]?$/i.test(s)) return true; // +2, +30, +30m…
+  if (/^\d{1,2}:?\d{0,2}$/.test(s)) return true; // 09, 09:3, 09:30
+  if (/^\d{0,4}(-\d{0,2}){0,2}-?$/.test(s)) return true; // 2026, 2026-11-, 2026-11-05
+  if (/^\d{4}-\d{2}-\d{2}[ T]?\d{0,2}:?\d{0,2}$/.test(s)) return true; // date [T ]hh[:mm]
+  return false;
+}
+
 export function TodoEditorView({
   mode,
   defaultTitle,
@@ -76,8 +91,11 @@ export function TodoEditorView({
   const { focus } = useFocusManager();
 
   const dueInvalid = due.trim().length > 0 && !parseWhen(due);
+  const dueLiveInvalid = dueInvalid && !looksLikeIncompleteWhen(due);
   const remindInvalid = remind.trim().length > 0 && !parseWhen(remind);
+  const remindLiveInvalid = remindInvalid && !looksLikeIncompleteWhen(remind);
   const meetError = meetingError(meetStart, meetEnd);
+  const meetLiveError = meetingLiveError(meetStart, meetEnd);
 
   useInput((input, key) => {
     if (key.escape) {
@@ -157,7 +175,7 @@ export function TodoEditorView({
               />
             )}
           </Field>
-          {dueInvalid && (
+          {dueLiveInvalid && (
             <Box marginLeft={4}>
               <Text color={color.danger}>无法识别的日期 · {WHEN_HINT}</Text>
             </Box>
@@ -177,7 +195,7 @@ export function TodoEditorView({
               />
             )}
           </Field>
-          {remindInvalid && (
+          {remindLiveInvalid && (
             <Box marginLeft={4}>
               <Text color={color.danger}>无法识别的时间 · {WHEN_HINT}</Text>
             </Box>
@@ -219,9 +237,9 @@ export function TodoEditorView({
               />
             )}
           </Field>
-          {meetError && (
+          {meetLiveError && (
             <Box marginLeft={4}>
-              <Text color={color.danger}>{meetError}</Text>
+              <Text color={color.danger}>{meetLiveError}</Text>
             </Box>
           )}
 
@@ -278,6 +296,19 @@ function meetingError(startRaw: string, endRaw: string): string | null {
   if (!to) return `无法识别的会议结束时间 · ${WHEN_HINT}`;
   if (to.at <= from.at) return "会议结束时间必须晚于开始时间";
   return null;
+}
+
+/**
+ * The live variant only complains once both sides parse — half-typed windows
+ * ("2026-11-18 2" in one box, the other still empty) are mid-typing, not
+ * mistakes. Ctrl+S still runs the strict check above.
+ */
+function meetingLiveError(startRaw: string, endRaw: string): string | null {
+  const start = startRaw.trim();
+  const end = endRaw.trim();
+  if (start === "" || end === "") return null;
+  if (!parseWhen(start) || !parseWhen(end)) return null;
+  return meetingError(startRaw, endRaw);
 }
 
 interface FieldProps {
